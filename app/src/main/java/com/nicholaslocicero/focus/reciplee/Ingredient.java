@@ -10,5 +10,11 @@ public class Ingredient {
     mAmount = amount;
   }
 
+  public String getIngredient() {
+    return mIngredient;
+  }
 
+  public String getAmount() {
+    return String.format("%.0f", mAmount);
+  }
 }
