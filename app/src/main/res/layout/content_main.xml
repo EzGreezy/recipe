@@ -9,16 +9,10 @@
   tools:context="com.nicholaslocicero.focus.reciplee.MainActivity"
   tools:showIn="@layout/app_bar_main">
 
-  <EditText
-    android:id="@+id/new_recipe"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
-
   <fragment
     android:id="@+id/grocery_list"
     android:name="com.nicholaslocicero.focus.reciplee.GroceryListFragment"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toBottomOf="@id/new_recipe"/>
+    android:layout_height="wrap_content"/>
 
 </android.support.constraint.ConstraintLayout>

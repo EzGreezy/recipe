@@ -7,9 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -19,6 +23,9 @@ public class GroceryListFragment extends Fragment {
 
   private RecyclerView mIngredientRecyclerView;
   private ListAdapter mIgredientListAdapter;
+  private Button mNewIngredient;
+  private EditText mIngredientText;
+  private Random rng = new Random();
 
 
   public GroceryListFragment() {
@@ -33,8 +40,24 @@ public class GroceryListFragment extends Fragment {
 
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    mNewIngredient = view.findViewById(R.id.add_recipe_button);
+    mIngredientText = view.findViewById(R.id.new_recipe);
 
     updateUI();
+
+    mNewIngredient.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIngredient(mIngredientText.getText().toString());
+        ingredient.setAmount(rng.nextFloat() * 10 + 1);
+        KitchenIngredients kitchenIngredients = KitchenIngredients.get(getActivity());
+        kitchenIngredients.addIngredient(ingredient);
+        mIgredientListAdapter.notifyItemInserted(0);
+        mIngredientRecyclerView.scrollToPosition(0);
+        mIngredientText.setText("");
+      }
+    });
 
     return view;
   }
@@ -44,7 +67,6 @@ public class GroceryListFragment extends Fragment {
     List<Ingredient> ingredients = kitchenIngredients.getIngredients();
     mIgredientListAdapter = new ListAdapter(ingredients);
     mIngredientRecyclerView.setAdapter(mIgredientListAdapter);
-
   }
 
   private class ListHolder extends RecyclerView.ViewHolder {

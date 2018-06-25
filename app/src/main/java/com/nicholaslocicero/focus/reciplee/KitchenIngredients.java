@@ -43,10 +43,16 @@ public class KitchenIngredients {
   private KitchenIngredients(Context context) {
     mIngredients = new ArrayList<>();
     for (String food : randomFoods) {
-      Ingredient ingredient = new Ingredient(food, rng.nextFloat() * 10);
+      Ingredient ingredient = new Ingredient();
+      ingredient.setIngredient(food);
+      ingredient.setAmount(rng.nextFloat() * 10 + 1);
       mIngredients.add(ingredient);
     }
   }
 
   public List<Ingredient> getIngredients() { return mIngredients;}
+
+  public void addIngredient(Ingredient ingredient) {
+    mIngredients.add(0, ingredient);
+  }
 }

@@ -5,9 +5,7 @@ public class Ingredient {
   private String mIngredient;
   private Float mAmount;
 
-  public Ingredient(String ingredient, Float amount) {
-    mIngredient = ingredient;
-    mAmount = amount;
+  public Ingredient() {
   }
 
   public String getIngredient() {
@@ -16,5 +14,13 @@ public class Ingredient {
 
   public String getAmount() {
     return String.format("%.0f", mAmount);
+  }
+
+  public void setIngredient(String ingredient) {
+    mIngredient = ingredient;
+  }
+
+  public void setAmount(Float amount) {
+    mAmount = amount;
   }
 }
