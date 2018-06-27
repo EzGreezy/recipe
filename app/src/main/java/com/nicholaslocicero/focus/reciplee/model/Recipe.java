@@ -4,14 +4,39 @@ import static android.arch.persistence.room.ColumnInfo.NOCASE;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "recipes")
+@Entity(
+    tableName = "recipes",
+    foreignKeys = {
+        @ForeignKey(
+            entity = Ingredient.class,
+            parentColumns = "ingredient_id", childColumns = "ingredient_id",
+            onDelete = ForeignKey.CASCADE
+        )
+    },
+    indices = {
+        @Index(value = {"ingredient_id"}, unique = true)
+    }
+)
 public class Recipe {
 
   @PrimaryKey(autoGenerate = true)
   private long recipeId;
+
+  public long getIngredientId() {
+    return ingredientId;
+  }
+
+  public void setIngredientId(long ingredientId) {
+    this.ingredientId = ingredientId;
+  }
+
+  @ColumnInfo(name = "ingredient_id")
+  private long ingredientId;
 
   @NonNull
   @ColumnInfo(name="name", collate = NOCASE)

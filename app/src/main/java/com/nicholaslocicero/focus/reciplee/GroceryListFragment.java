@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.Ingredient;
-import com.nicholaslocicero.focus.reciplee.model.IngredientsDao;
 import com.nicholaslocicero.focus.reciplee.model.RecipleeDatabase;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,10 +26,12 @@ import java.util.Random;
 public class GroceryListFragment extends Fragment {
 
   private RecyclerView mIngredientRecyclerView;
+  private List<Ingredient> mIngredientsList = new ArrayList<>();
   private ListAdapter mIngredientListAdapter;
   private Button mIngredientButton;
   private EditText mIngredientText;
   private Random rng = new Random();
+  private boolean startup = true;
 
 
   public GroceryListFragment() {
@@ -47,15 +49,15 @@ public class GroceryListFragment extends Fragment {
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
     mIngredientText = view.findViewById(R.id.add_ingredient_text);
 
-    updateUI();
+    refreshList();
 
     mIngredientButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         if (!mIngredientText.getText().toString().equals("")) {
           Ingredient ingredient = new Ingredient();
-          ingredient.setIngredient(mIngredientText.getText().toString());
-          ingredient.setAmount(rng.nextFloat() * 10 + 1);
+          ingredient.setName(mIngredientText.getText().toString());
+          ingredient.setAmount(Integer.toString(rng.nextInt(10)));
           ingredient.setMeasurement("cups");
           new IngredientInsert().execute(ingredient);
           mIngredientText.setText("");
@@ -66,13 +68,6 @@ public class GroceryListFragment extends Fragment {
     return view;
   }
 
-  private void updateUI() {
-    KitchenIngredients kitchenIngredients = KitchenIngredients.get(getActivity());
-    List<Ingredient> ingredients = RecipleeDatabase.getInstance(getContext()).getIngredientDao().select();
-    mIngredientListAdapter = new ListAdapter(ingredients);
-    mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
-  }
-
   private class ListHolder extends RecyclerView.ViewHolder {
     private Ingredient mIngredient;
     private TextView mIngredientTextView;
@@ -81,13 +76,13 @@ public class GroceryListFragment extends Fragment {
     public ListHolder(LayoutInflater inflater, ViewGroup parent) {
       super(inflater.inflate(R.layout.list_item_ingredient, parent, false));
 
-      mIngredientTextView = (TextView) itemView.findViewById(R.id.ingredient);
+      mIngredientTextView = (TextView) itemView.findViewById(R.id.name);
       mAmountTextView = (TextView) itemView.findViewById(R.id.quantity);
     }
 
     public void bind(Ingredient ingredient) {
       mIngredient = ingredient;
-      mIngredientTextView.setText(mIngredient.getIngredient());
+      mIngredientTextView.setText(mIngredient.getName());
       mAmountTextView.setText(mIngredient.getAmount());
     }
   }
@@ -120,6 +115,14 @@ public class GroceryListFragment extends Fragment {
 
   private void refreshList() {
     new IngredientsQuery().execute();
+    if (startup) {
+      mIngredientListAdapter = new ListAdapter(mIngredientsList);
+      mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
+      startup = false;
+    } else {
+      mIngredientListAdapter.notifyItemInserted(0);
+      mIngredientRecyclerView.scrollToPosition(0);
+    }
   }
 
   private class IngredientsQuery extends AsyncTask<Void, Void, List<Ingredient>> {
@@ -130,7 +133,8 @@ public class GroceryListFragment extends Fragment {
     }
     @Override
     protected void onPostExecute(List<Ingredient> ingredients) {
-      updateUI();
+      mIngredientsList.clear();
+      mIngredientsList.addAll(ingredients);
     }
   }
 

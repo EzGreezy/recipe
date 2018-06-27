@@ -14,6 +14,6 @@ public interface RecipesDao {
   @Query("SELECT * FROM recipes ORDER BY name DESC")
   List<Recipe> select();
 
-  @Query("SELECT * FROM Ingredient WHERE recipe LIKE :recipe ORDER BY ingredient DESC")
+  @Query("SELECT * FROM Ingredient WHERE recipe LIKE :recipe ORDER BY name DESC")
   List<Ingredient> selectRecipe(String recipe);
 }

@@ -16,15 +16,15 @@ public abstract class RecipleeDatabase extends RoomDatabase {
 
   private static RecipleeDatabase instance = null;
 
+  public abstract IngredientsDao getIngredientDao();
+
   public static RecipleeDatabase getInstance(Context context) {
-    if(instance == null) {
+    if (instance == null) {
       instance = Room.databaseBuilder(
           context.getApplicationContext(), RecipleeDatabase.class, DATABASE_NAME).build();
     }
     return instance;
   }
-
-  public abstract IngredientsDao getIngredientDao();
 
   public void forgetInstance(Context context) {
     instance = null;

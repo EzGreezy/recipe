@@ -9,24 +9,39 @@ import android.support.annotation.NonNull;
 public class Ingredient {
 
   @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "ingredient_id")
   private long ingredientId;
+
   @NonNull
-  private String ingredient;
-  // now can be null
-  private Float amount;
+  private String name;
+  private String amount;
+
+  public long getIngredientId() {
+    return ingredientId;
+  }
+
+  public String getRecipe() {
+    return recipe;
+  }
+
   private String measurement;
+
+  public void setRecipe(String recipe) {
+    this.recipe = recipe;
+  }
+
   // TODO make long reference to other id in table
-  @ColumnInfo(name="recipe")
+  @ColumnInfo(name="recipe", index = true)
   private String recipe;
 
   public long getId() { return ingredientId; }
   @NonNull
-  public String getIngredient() {
-    return ingredient;
+  public String getName() {
+    return name;
   }
   @NonNull
   public String getAmount() {
-    return String.format("%.0f", amount);
+    return amount;
   }
   @NonNull
   public String getMeasurement() {return measurement; }
@@ -35,11 +50,11 @@ public class Ingredient {
     this.ingredientId = ingredientId;
   }
 
-  public void setIngredient(@NonNull String ingredient) {
-    this.ingredient = ingredient;
+  public void setName(@NonNull String name) {
+    this.name = name;
   }
 
-  public void setAmount(@NonNull float amount) {
+  public void setAmount(@NonNull String amount) {
     this.amount = amount;
   }
 

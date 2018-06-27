@@ -11,10 +11,10 @@ public interface IngredientsDao {
   @Insert
   long insert(Ingredient ingredient);
 
-  @Query("SELECT * FROM ingredients ORDER BY name DESC")
+  @Query("SELECT * FROM ingredients ORDER BY ingredient_id DESC")
   List<Ingredient> select();
 
-  @Query("SELECT * FROM ingredients, recipes WHERE recipe.name LIKE :recipe ORDER BY ingredient DESC")
+  @Query("SELECT * FROM ingredients, recipes WHERE recipes.name LIKE :recipe ORDER BY ingredient_id DESC")
   List<Ingredient> selectRecipe(String recipe);
 
 }
