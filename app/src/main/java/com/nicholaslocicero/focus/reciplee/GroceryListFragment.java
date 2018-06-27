@@ -1,6 +1,7 @@
 package com.nicholaslocicero.focus.reciplee;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.nicholaslocicero.focus.reciplee.model.Ingredient;
+import com.nicholaslocicero.focus.reciplee.model.IngredientsDao;
+import com.nicholaslocicero.focus.reciplee.model.RecipleeDatabase;
 import java.util.List;
 import java.util.Random;
 
@@ -22,8 +26,8 @@ import java.util.Random;
 public class GroceryListFragment extends Fragment {
 
   private RecyclerView mIngredientRecyclerView;
-  private ListAdapter mIgredientListAdapter;
-  private Button mNewIngredient;
+  private ListAdapter mIngredientListAdapter;
+  private Button mIngredientButton;
   private EditText mIngredientText;
   private Random rng = new Random();
 
@@ -40,22 +44,22 @@ public class GroceryListFragment extends Fragment {
 
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    mNewIngredient = view.findViewById(R.id.add_recipe_button);
-    mIngredientText = view.findViewById(R.id.new_recipe);
+    mIngredientButton = view.findViewById(R.id.add_ingredient_button);
+    mIngredientText = view.findViewById(R.id.add_ingredient_text);
 
     updateUI();
 
-    mNewIngredient.setOnClickListener(new OnClickListener() {
+    mIngredientButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setIngredient(mIngredientText.getText().toString());
-        ingredient.setAmount(rng.nextFloat() * 10 + 1);
-        KitchenIngredients kitchenIngredients = KitchenIngredients.get(getActivity());
-        kitchenIngredients.addIngredient(ingredient);
-        mIgredientListAdapter.notifyItemInserted(0);
-        mIngredientRecyclerView.scrollToPosition(0);
-        mIngredientText.setText("");
+        if (!mIngredientText.getText().toString().equals("")) {
+          Ingredient ingredient = new Ingredient();
+          ingredient.setIngredient(mIngredientText.getText().toString());
+          ingredient.setAmount(rng.nextFloat() * 10 + 1);
+          ingredient.setMeasurement("cups");
+          new IngredientInsert().execute(ingredient);
+          mIngredientText.setText("");
+        }
       }
     });
 
@@ -64,9 +68,9 @@ public class GroceryListFragment extends Fragment {
 
   private void updateUI() {
     KitchenIngredients kitchenIngredients = KitchenIngredients.get(getActivity());
-    List<Ingredient> ingredients = kitchenIngredients.getIngredients();
-    mIgredientListAdapter = new ListAdapter(ingredients);
-    mIngredientRecyclerView.setAdapter(mIgredientListAdapter);
+    List<Ingredient> ingredients = RecipleeDatabase.getInstance(getContext()).getIngredientDao().select();
+    mIngredientListAdapter = new ListAdapter(ingredients);
+    mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
   }
 
   private class ListHolder extends RecyclerView.ViewHolder {
@@ -111,6 +115,35 @@ public class GroceryListFragment extends Fragment {
     @Override
     public int getItemCount() {
       return mIngredients.size();
+    }
+  }
+
+  private void refreshList() {
+    new IngredientsQuery().execute();
+  }
+
+  private class IngredientsQuery extends AsyncTask<Void, Void, List<Ingredient>> {
+
+    @Override
+    protected List<Ingredient> doInBackground(Void... voids) {
+      return RecipleeDatabase.getInstance(getContext()).getIngredientDao().select();
+    }
+    @Override
+    protected void onPostExecute(List<Ingredient> ingredients) {
+      updateUI();
+    }
+  }
+
+  private class IngredientInsert extends AsyncTask<Ingredient, Void, Long> {
+
+    @Override
+    protected Long doInBackground(Ingredient... ingredients) {
+      return RecipleeDatabase.getInstance(getContext()).getIngredientDao().insert(ingredients[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Long aLong) {
+      refreshList();
     }
   }
 }

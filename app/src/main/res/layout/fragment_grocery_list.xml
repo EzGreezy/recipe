@@ -4,6 +4,7 @@
   android:layout_height="match_parent"
   android:layout_width="match_parent"
   android:orientation="vertical">
+
   <LinearLayout
     android:id="@+id/search_bar"
     android:layout_width="match_parent"
@@ -13,9 +14,29 @@
       android:id="@+id/new_recipe"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
-      android:layout_weight="1"/>
+      android:layout_weight="1"
+      android:hint="@string/search_for_a_recipe"/>
     <Button
       android:id="@+id/add_recipe_button"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_weight="0"
+      android:text="Search"/>
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/add_ingredient"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <EditText
+      android:id="@+id/add_ingredient_text"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:hint="@string/add_one_ingredient"/>
+    <Button
+      android:id="@+id/add_ingredient_button"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
       android:layout_weight="0"
