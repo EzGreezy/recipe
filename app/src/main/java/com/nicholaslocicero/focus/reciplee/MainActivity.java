@@ -1,5 +1,7 @@
 package com.nicholaslocicero.focus.reciplee;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.nicholaslocicero.focus.reciplee.model.RecipleeDatabase;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -36,6 +39,15 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
+
+    new AsyncTask<Context, Void, Void>() {
+      @Override
+      protected Void doInBackground(Context... contexts) {
+        // Replace Attendance and getStudentDao with the relevant class & method names for your project.
+        RecipleeDatabase.getInstance(contexts[0]).getIngredientsDao().select();
+        return null;
+      }
+    }.execute(this);
   }
 
   @Override

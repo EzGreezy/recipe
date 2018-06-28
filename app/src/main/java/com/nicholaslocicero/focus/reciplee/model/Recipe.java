@@ -34,7 +34,6 @@ public class Recipe {
   public void setIngredientId(long ingredientId) {
     this.ingredientId = ingredientId;
   }
-
   @ColumnInfo(name = "ingredient_id")
   private long ingredientId;
 

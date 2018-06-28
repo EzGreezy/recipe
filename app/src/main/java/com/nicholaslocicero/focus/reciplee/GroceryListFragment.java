@@ -48,6 +48,8 @@ public class GroceryListFragment extends Fragment {
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
     mIngredientText = view.findViewById(R.id.add_ingredient_text);
+    mIngredientListAdapter = new ListAdapter(mIngredientsList);
+    mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
 
     refreshList();
 
@@ -115,26 +117,24 @@ public class GroceryListFragment extends Fragment {
 
   private void refreshList() {
     new IngredientsQuery().execute();
-    if (startup) {
-      mIngredientListAdapter = new ListAdapter(mIngredientsList);
-      mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
-      startup = false;
-    } else {
-      mIngredientListAdapter.notifyItemInserted(0);
-      mIngredientRecyclerView.scrollToPosition(0);
-    }
   }
 
   private class IngredientsQuery extends AsyncTask<Void, Void, List<Ingredient>> {
 
     @Override
     protected List<Ingredient> doInBackground(Void... voids) {
-      return RecipleeDatabase.getInstance(getContext()).getIngredientDao().select();
+      return RecipleeDatabase.getInstance(getContext()).getIngredientsDao().select();
     }
     @Override
     protected void onPostExecute(List<Ingredient> ingredients) {
       mIngredientsList.clear();
       mIngredientsList.addAll(ingredients);
+      if (startup) {
+        startup = false;
+      } else {
+        mIngredientListAdapter.notifyItemInserted(0);
+        mIngredientRecyclerView.scrollToPosition(0);
+      }
     }
   }
 
@@ -142,7 +142,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected Long doInBackground(Ingredient... ingredients) {
-      return RecipleeDatabase.getInstance(getContext()).getIngredientDao().insert(ingredients[0]);
+      return RecipleeDatabase.getInstance(getContext()).getIngredientsDao().insert(ingredients[0]);
     }
 
     @Override
