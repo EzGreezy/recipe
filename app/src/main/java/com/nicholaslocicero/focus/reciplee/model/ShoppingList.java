@@ -2,8 +2,7 @@ package com.nicholaslocicero.focus.reciplee.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import java.util.Date;
 
 @Entity(tableName = "shopping_list",
     primaryKeys = {"ingredient_id", "recipe_id"},
@@ -38,8 +37,8 @@ public class ShoppingList {
   private long recipe_id;
   private String recipe_name;
   private String recipe_directions;
-  private long recipe_date;
-  
+  private Date recipe_date;
+
   private long ingredient_id;
   private String ingredient_name;
   private Float ingredient_amount;
@@ -70,11 +69,11 @@ public class ShoppingList {
     this.recipe_directions = recipe_directions;
   }
 
-  public long getRecipe_date() {
+  public Date getRecipe_date() {
     return recipe_date;
   }
 
-  public void setRecipe_date(long recipe_date) {
+  public void setRecipe_date(Date recipe_date) {
     this.recipe_date = recipe_date;
   }
 

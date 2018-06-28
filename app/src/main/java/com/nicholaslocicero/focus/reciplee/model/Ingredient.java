@@ -5,9 +5,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "ingredients")
+@Entity(tableName = "ingredients",
+  primaryKeys = {"ingredient_id", "recipe_id"})
 public class Ingredient {
-
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "ingredient_id")
   private long ingredientId;
