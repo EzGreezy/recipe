@@ -9,7 +9,7 @@
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ingredient_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `amount` TEXT, `measurement` TEXT, `recipe` TEXT)",
         "fields": [
           {
-            "fieldPath": "ingredientId",
+            "fieldPath": "ingredient_id",
             "columnName": "ingredient_id",
             "affinity": "INTEGER",
             "notNull": true
