@@ -1,5 +1,6 @@
 package com.nicholaslocicero.focus.reciplee.model.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
@@ -18,20 +19,22 @@ import android.support.annotation.NonNull;
         )
     },
     indices = {
-        @Index(value = {"student_id", "start_date", "duration"}, unique = true)
+        @Index(value = {"id", "ingredient_id", "recipe_id"}, unique = true)
     }
 )
 public class RecipeItem {
 
   @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "id", index = true)
   private long id;
 
+  @ColumnInfo(name = "ingredient_id", index = true)
   private long ingredient_id;
+  @ColumnInfo(name = "recipe_id", index = true)
   private long recipe_id;
 
   @NonNull
   private Float quantity;
-  private String measurement;
 
   public long getId() {
     return id;
@@ -57,19 +60,11 @@ public class RecipeItem {
     this.recipe_id = recipe_id;
   }
 
-  public float getQuantity() {
+  public Float getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(float quantity) {
+  public void setQuantity(Float quantity) {
     this.quantity = quantity;
-  }
-
-  public String getMeasurement() {
-    return measurement;
-  }
-
-  public void setMeasurement(String measurement) {
-    this.measurement = measurement;
   }
 }

@@ -1,13 +1,10 @@
 package com.nicholaslocicero.focus.reciplee;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,14 +13,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import com.nicholaslocicero.focus.reciplee.model.RecipleeDatabase;
-import java.util.List;
+import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
+import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
+  @SuppressLint("StaticFieldLeak")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -39,12 +41,12 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-
+    // TODO CHECK WITH COACH WHY THIS IS BUGGY
     new AsyncTask<Context, Void, Void>() {
       @Override
       protected Void doInBackground(Context... contexts) {
         // Replace Attendance and getStudentDao with the relevant class & method names for your project.
-        RecipleeDatabase.getInstance(contexts[0]).getIngredientsDao().select();
+        Reciplee.getInstance(contexts[0]).getIngredientDao().select();
         return null;
       }
     }.execute(this);

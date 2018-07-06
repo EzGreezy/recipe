@@ -1,6 +1,5 @@
 package com.nicholaslocicero.focus.reciplee;
 
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.nicholaslocicero.focus.reciplee.model.Ingredient;
-import com.nicholaslocicero.focus.reciplee.model.RecipleeDatabase;
+import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
+import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,10 +27,13 @@ public class GroceryListFragment extends Fragment {
   private RecyclerView mIngredientRecyclerView;
   private List<Ingredient> mIngredientsList = new ArrayList<>();
   private ListAdapter mIngredientListAdapter;
+  private Button mRecipeButton;
+  private EditText mRecipeText;
   private Button mIngredientButton;
   private EditText mIngredientText;
   private Random rng = new Random();
   private boolean startup = true;
+
 
 
   public GroceryListFragment() {
@@ -48,6 +50,8 @@ public class GroceryListFragment extends Fragment {
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
     mIngredientText = view.findViewById(R.id.add_ingredient_text);
+    mRecipeButton = view.findViewById(R.id.add_recipe_button);
+    mRecipeText = view.findViewById(R.id.add_recipe_text);
     mIngredientListAdapter = new ListAdapter(mIngredientsList);
     mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
 
@@ -56,16 +60,36 @@ public class GroceryListFragment extends Fragment {
     mIngredientButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (!mIngredientText.getText().toString().equals("")) {
+        if (!mRecipeText.getText().toString().equals("")) {
+
           Ingredient ingredient = new Ingredient();
           ingredient.setName(mIngredientText.getText().toString());
-          ingredient.setAmount(Integer.toString(rng.nextInt(10)));
-          ingredient.setMeasurement("cups");
           new IngredientInsert().execute(ingredient);
           mIngredientText.setText("");
         }
       }
     });
+
+    // TODO SET UP AUTOTEXT VIEW FOR RECIPLEE_DB
+
+//    mRecipeButton.setOnClickListener(new OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        try {
+//
+//        } catch (Exception e) {
+//
+//        }
+//        if (!mIngredientText.getText().toString().equals("")) {
+//          Ingredient ingredient = new Ingredient();
+//          ingredient.setName(mIngredientText.getText().toString());
+//          ingredient.setAmount(Integer.toString(rng.nextInt(10)));
+//          ingredient.setMeasurement("cups");
+//          new IngredientInsert().execute(ingredient);
+//          mIngredientText.setText("");
+//        }
+//      }
+//    });
 
     return view;
   }
@@ -85,7 +109,6 @@ public class GroceryListFragment extends Fragment {
     public void bind(Ingredient ingredient) {
       mIngredient = ingredient;
       mIngredientTextView.setText(mIngredient.getName());
-      mAmountTextView.setText(mIngredient.getAmount());
     }
   }
 
@@ -123,7 +146,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected List<Ingredient> doInBackground(Void... voids) {
-      return RecipleeDatabase.getInstance(getContext()).getIngredientsDao().select();
+      return Reciplee.getInstance(getContext()).getIngredientDao().select();
     }
     @Override
     protected void onPostExecute(List<Ingredient> ingredients) {
@@ -142,7 +165,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected Long doInBackground(Ingredient... ingredients) {
-      return RecipleeDatabase.getInstance(getContext()).getIngredientsDao().insert(ingredients[0]);
+      return Reciplee.getInstance(getContext()).getIngredientDao().insert(ingredients[0]);
     }
 
     @Override

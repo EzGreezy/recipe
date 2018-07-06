@@ -1,7 +1,7 @@
 package com.nicholaslocicero.focus.reciplee;
 
 import android.content.Context;
-import com.nicholaslocicero.focus.reciplee.model.Ingredient;
+import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import java.util.ArrayList;
 import java.util.List;
 

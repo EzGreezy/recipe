@@ -1,7 +1,9 @@
 package com.nicholaslocicero.focus.reciplee.model.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -14,21 +16,22 @@ import android.support.annotation.NonNull;
     ),
     @ForeignKey(
       entity = Recipe.class,
-      parentColumns = "id", childColumns = "recipe_id"
-    ),
-    @ForeignKey(
-      entity = RecipeItem.class,
-      parentColumns = "id", childColumns = "recipe_item_id"
+      parentColumns = "recipe_id", childColumns = "recipe_id"
     )
-  }
+  },
+    indices = {
+        @Index(value = {"id", "ingredient_id", "recipe_id"}, unique = true)
+    }
 )
 public class ShoppingItem {
   @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "id", index = true)
   private long id;
 
+  @ColumnInfo(name = "ingredient_id", index = true)
   private long ingredient_id;
+  @ColumnInfo(name = "recipe_id", index = true)
   private long recipe_id;
-  private long recipe_item_id;
   private int position;
 
   public int getPosition() {
@@ -64,14 +67,6 @@ public class ShoppingItem {
 
   public void setRecipe_id(long recipe_id) {
     this.recipe_id = recipe_id;
-  }
-
-  public long getRecipe_item_id() {
-    return recipe_item_id;
-  }
-
-  public void setRecipe_item_id(long recipe_item_id) {
-    this.recipe_item_id = recipe_item_id;
   }
 
   @NonNull
