@@ -3,11 +3,15 @@
 
 import re
 import readchar
+import json
 
 recipesFile = open('recipes.xml','r')
 recipesOutput = open('recipes.txt', 'w')
 titlesOutput = open('titles.txt', 'w')
 ingredientsFile = open('ingredients.txt', 'w')
+# {{"recipe": "title", "directions": "string", "recipeIngredients" = {"raw_ingredient_string": ["ingredient"]}, ...}
+theRecipes = {}
+
 
 shouldCapture = False
 
@@ -123,7 +127,7 @@ for r in recipes:
         isIngredients = False
     elif isIngredients and re.search('[a-zA-Z]', text):
         for i in range(len(newIngredientsList)):
-            if newIngredientsList[i] in text:
+            if newIngredientsList[i] in text or re.search(r'[Cc]ategory', text):
                 break
             if i == len(newIngredientsList) - 1:
                 print(text)
@@ -131,7 +135,8 @@ for r in recipes:
 """
 ris = getRecipeItems()
 for i in range(100):
-    print(next(ris))"""
+    print(next(ris))
+"""
 recipes.close()
 print(sorted(recipeItemsWOIngredient))
 print(len(recipeItemsWOIngredient))
