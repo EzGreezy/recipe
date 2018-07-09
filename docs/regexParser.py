@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import re
+import readchar
 
-f = open('recipes.xml','r')
-s = open('recipes2.txt', 'w')
-t = open('titles.txt', 'w')
+recipesFile = open('recipes.xml','r')
+recipesOutput = open('recipes.txt', 'w')
+titlesOutput = open('titles.txt', 'w')
+ingredientsFile = open('ingredients.txt', 'w')
 
 shouldCapture = False
 
@@ -22,8 +24,10 @@ fractions = {'½': '.5', '⅓':'.334', '⅔':'.667', '¼':'.25', '¾':'.75', '�
              '⅒':'.1'}
 addThese = []
 categories = []
+ingredients = set([])
+regex = re.compile('\[\[[^a-zA-Z]\]\]')
 
-for line in f:
+for line in recipesFile:
 
     text = line.strip()
 
@@ -49,11 +53,22 @@ for line in f:
                 for key, value in fractions.items():
                     if key in addThese[i]:
                         addThese[i] = re.sub(key, fractions[key], addThese[i])
-            s.write(title + '\n')
-            t.write(title + '\n')
-            for add in addThese:
-                s.write(add + '\n')
-            s.write(text.replace('</page>', '') + '\n')
+            recipesOutput.write(title + '\n')
+            titlesOutput.write(title + '\n')
+            atDirections = False
+            for addLine in addThese:
+                if not atDirections:
+                    if '==Directions==' in addLine:
+                        atDirections = True
+                        recipesOutput.write(addLine + '\n')
+                    else:
+                        findIngs = re.findall(r'\[\[[a-z |]+\]\]', addLine)
+                        for w in findIngs:
+                            ingredients.add(w) # .lower() ?
+                        recipesOutput.write(addLine.lower().strip() + '\n')
+                else:
+                    recipesOutput.write(addLine + '\n')
+            recipesOutput.write(text.replace('</page>', '') + '\n')
             numberOfRecipes += 1
         title = ""
         addThese = []
@@ -62,7 +77,7 @@ for line in f:
         hasIngredients = False
         hasDirections = False
         hasCategory = False
-    if hasIngredients:
+    if hasDescription:
         if "[[File" not in text and "Videos" not in text:
             text = re.sub(r"<.*>", "", text)
             text = re.sub(r"'''", "", text)
@@ -74,9 +89,50 @@ for line in f:
                 text = text.replace('</text>', '')
             addThese.append(text)
 
-f.close()
-s.close()
-t.close()
+
+"""
 print("The number of recipes added was:", str(numberOfRecipes))
 print("The total number of unique categories:", len(set(categories)))
-print(sorted(set(categories)))
+print("Number of ingredients:", len(ingredients))
+"""
+
+ingredientsList = sorted(list(ingredients))
+newIngredientsList = []
+for i in ingredientsList:
+    ing = i.replace('[[', '').replace(']]', '')
+    ingredientsFile.write(ing + '\n')
+    newIngredientsList.append(ing)
+
+recipesFile.close()
+ingredientsFile.close()
+recipesOutput.close()
+titlesOutput.close()
+
+recipeItemsWOIngredient = []
+recipes = open('recipes.txt', 'r')
+
+isIngredients = False
+for r in recipes:
+    text = r
+    text = text.lower()
+    if re.search(r'[= ]+[Ii]ngredients[= ]+', text):
+        isIngredients = True
+    elif re.search(r'[= ]+[Dd]irections[= ]+', text):
+        isIngredients = False
+    elif re.search(r'[= ]+[Dd]escription[= ]+', text):
+        isIngredients = False
+    elif isIngredients and re.search('[a-zA-Z]', text):
+        for i in range(len(newIngredientsList)):
+            if newIngredientsList[i] in text:
+                break
+            if i == len(newIngredientsList) - 1:
+                print(text)
+                recipeItemsWOIngredient.append(text)
+"""
+ris = getRecipeItems()
+for i in range(100):
+    print(next(ris))"""
+recipes.close()
+print(sorted(recipeItemsWOIngredient))
+print(len(recipeItemsWOIngredient))
+# print(len(ingredients))
