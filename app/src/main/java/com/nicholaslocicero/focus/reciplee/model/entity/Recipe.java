@@ -8,39 +8,32 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "recipes")
 public class Recipe {
 
-  @PrimaryKey(autoGenerate = true)
-  @ColumnInfo(name = "recipe_id")
+  @PrimaryKey
   private long id;
 
-  @NonNull
   private String name;
-
-  @NonNull
   private String directions;
 
   public long getId() {
     return id;
   }
-
   public void setId(long id) {
     this.id = id;
   }
 
-  @NonNull
+
   public String getName() {
     return name;
   }
-
-  public void setName(@NonNull String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  @NonNull
+
   public String getDirections() {
     return directions;
   }
-
-  public void setDirections(@NonNull String directions) {
+  public void setDirections(String directions) {
     this.directions = directions;
   }
 }

@@ -73,6 +73,7 @@ for line in recipesFile:
                 else:
                     recipesOutput.write(addLine + '\n')
             recipesOutput.write(text.replace('</page>', '') + '\n')
+            recipesOutput.write('==end==\n')
             numberOfRecipes += 1
         title = ""
         addThese = []

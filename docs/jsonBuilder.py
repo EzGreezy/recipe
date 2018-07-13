@@ -7,7 +7,7 @@ import json
 #   "title" : {
 #     "directions": "string",
 #     "recipeIngredients" = {
-#       "raw_ingredient_string": ["ingredient"]
+#       "ingredient": ["raw_ingredient_string"]
 #     },
 #     "categories": ["category"]
 #   },
@@ -16,125 +16,196 @@ import json
 #   },
 #   ...
 # }
-theRecipes = {"zzzztotal": 0}
+theRecipes = []
 
-recipesFile = open('recipes.xml','r')
-ingredientsFile = open('ingredients.txt', 'r')
+recipesFile = open('recipes.txt','r')
+# ingredientsFile = open('ingredients.txt', 'r')
+# ingredientsString = ingredientsFile.nextLine()
+# print(ingredientsString)
 
-ingredientsString = ingredientsFile.nextLine()
-print(ingredientsString)
+categoryBuilder = []
+recipeBuilder = []
+categoryMapBuilder = []
+ingredientBuilder = []
+recipeItemBuilder = []
+itemIngredientMapBuilder = []
 
+ingredientsSet = set([])
+ingredientsIds = {}
 
-shouldCapture = False
-isRecipe = False
-hasIngredients = False
-hasDirections = False
-hasCategory = False
-hasDescription = False
-numberOfRecipes = 0
-numberWithCategories = 0
-fractions = {'½': '.5', '⅓':'.334', '⅔':'.667', '¼':'.25', '¾':'.75', '⅕':'.2',
-             '⅖':'.4', '⅗':'.6', '⅘':'.8', '⅙':'.167', '⅚':'.834', '⅐':'.143',
-             '⅛': '.125', '⅜': '.375', '⅝':'.625', '⅞':'.875', '⅑':'.111',
-             '⅒':'.1'}
-addThese = []
-
-for line in recipesFile:
-
-    text = line.strip()
-
-    categories = []
-    if '<title>' in text:
-        title = text
-        title = title.replace('<title>', '').replace('</title>', '')
-        shouldCapture = True
-    if re.search(r'[Cc]ategory', text):
-        hasCategory = True
-    if re.search(r'[Dd]escription', text):
-        hasDescription = True
-    if re.search(r'[Ii]ngredient', text):
-        hasIngredients = True
-    if re.search(r'[Dd]irection', text):
-        hasDirections = True
-
-    if '</page>' in text:
-        # May include recipes having hasDescription, hasIngredients,
-        #                            hasDirections,  hasCategory
-        if hasIngredients and hasDirections and hasDirections:
-            """ Leave fractions in for now.
-            for i in range(len(addThese)):
-                for key, value in fractions.items():
-                    if key in addThese[i]:
-                        addThese[i] = re.sub(key, fractions[key], addThese[i])
-            """
-            recipeDict = {}
-            recipeIngredients = {}
-            directions = []
-            categories = []
-            atCategory = False
-            step = 1
-            atDirections = False
-            for addLine in addThese:
-                text = addLine.strip().lower()
-                if not atDirections:
-                    if re.search(r'[Dd]irections', text):
-                        atDirections = True
-                    else:
-                        if re.search(r'\[\[[a-z]+[|]?[a-z]*\]\]'):
-                            
-                        else:
-                            break
-                        ingredients = []
-                        hasIngredients = False
-                        for i in ingredientsList:
-                            if i.replace('\n', '') in text:
-                                ingredients.append(i.strip())
-                                hasIngredients = True
-                        if hasIngredients:
-                            recipeIngredients[text] = ingredients
-                        else:
-                            recipeIngredients[text] = "NO"
-                elif not atCategory:
-                    if re.search(r'[Cc]ategory', text):
-                        atCategory = True
-                    else:
-                        directions.append(text)
+try:
+    while True:
+        text = next(recipesFile).strip()
+        if text == "==title==":
+            while text != "==ingredients==":
+                text = next(recipesFile).strip()
+            while len(text) == 0:
+                text = next(recipesFile).strip()
+            while text[0] != "*":
+                text = next(recipesFile).strip()
+                while len(text) == 0:
+                    text = next(recipesFile).strip()
+            while len(text) < 3:
+                text = next(recipesFile).strip()
+            while text[0] == "*" or text[0:3] == "===":
+                # TODO get sub ingredients later
+                if text[0:3] == "===":
+                    text = next(recipesFile).strip()
+                    while len(text) < 3:
+                        text = next(recipesFile).strip()
                 else:
-                    if "[[File" not in text and "Videos" not in text:
-                        text = re.sub(r"<.*>", "", text)
-                        text = re.sub(r"'''", "", text)
-                        category = re.sub(r'\[\[Category:', '', text)
-                        category = re.sub(r'\]\]', '', category)
-                        categories.append(category)
-        if directions != "" and recipeIngredients != {} and categories != []:
-            theRecipes[title] = {"directions": directions, "recipeIngredients": recipeIngredients, "categories": categories}
+                    ingredients = re.findall(r'\[\[[a-zA-Z\uFFFF|]+\]\]', text)
+                    if ingredients == []:
+                        hasNone = True
+                        break
+                    for i in ingredients:
+                        splitIngredients = i.split('|')
+                        for i in splitIngredients:
+                            ingredientsSet.add(i)
+                    text = next(recipesFile).strip()
+                    while len(text) < 3:
+                        text = next(recipesFile).strip()
+except(StopIteration):
+    ingredients = sorted(list(ingredientsSet))
+    for i in range(1,len(ingredients)+1):
+        ingredientsIds[ingredients[i-1].lower().replace('[[', '').replace(']]', '')] = i
+
+for key, val in ingredientsIds.items():
+    ingredientBuilder.append({"id": val, "name": key})
+categoriesSet = set([])
+categoriesIds = {}
+
+recipesFile.seek(0)
+try:
+    while True:
+        text = next(recipesFile).strip()
+        if text == "==title==":
+            while not re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
+                text = next(recipesFile).strip()
+        while text != "==end==":
+            d = False
+            while re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
+                d = True
+                cats = re.findall(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text)
+                for cat in cats:
+                    category = cat.lower()
+                    category = category.replace('[[category:', '').replace(' recipes]]', '')
+                    categoriesSet.add(category)
+                text = next(recipesFile).strip()
+            if not d:
+                text = next(recipesFile).strip()
+except(StopIteration):
+    categories = sorted(list(categoriesSet))
+    for i in range(1,len(categories)+1):
+        if categories[i-1] not in ingredientsIds:
+            categoriesIds[categories[i-1]] = i
+
+for key, val in categoriesIds.items():
+    categoryBuilder.append({"id": val, "name": key})
+
+recipeId = 1
+ingredientMapId = 1
+recipeItemId = 1
+categoryMapId = 1
+
+
+recipesFile.seek(0)
+try:
+    while True:
+        text = next(recipesFile).strip()
         title = ""
-        addThese = []
-        shouldCapture = False
-        hasDescription = False
-        hasIngredients = False
-        hasDirections = False
-        hasCategory = False
-        atCategory = False
+        directions = ""
+        recipeIngredients = []
         ingredients = []
-        theRecipes["zzzztotal"] += 1
-        print(theRecipes["zzzztotal"])
-    if hasDescription:
-        if "[[File" not in text and "Videos" not in text:
-            text = re.sub(r"<.*>", "", text)
-            text = re.sub(r"'''", "", text)
-            if 'Category:' in text:
-                category = re.sub(r'\[\[Category:', '', text)
-                category = re.sub(r'\]\]', '', category)
-                categories.append(category)
-            if '</text>' in text:
-                text = text.replace('</text>', '')
-            addThese.append(text)
-
+        categories = []
+        has = False
+        if text == "==title==":
+            title = next(recipesFile).strip()
+            while text != "==ingredients==":
+                text = next(recipesFile).strip()
+            while len(text) == 0:
+                text = next(recipesFile).strip()
+            while text[0] != "*":
+                text = next(recipesFile).strip()
+                while len(text) == 0:
+                    text = next(recipesFile).strip()
+            while len(text) < 3:
+                text = next(recipesFile).strip()
+            while text[0] == "*" or text[0:3] == "===":
+                # TODO get sub ingredients later
+                if text[0:3] == "===":
+                    text = next(recipesFile).strip()
+                    while len(text) < 3:
+                        text = next(recipesFile).strip()
+                else:
+                    ingredients = re.findall(r'\[\[[a-zA-Z\uFFFF]+\]\]', text)
+                    if ingredients == []:
+                        has = True
+                        break
+                    ingredientIDs = []
+                    for j in ingredients:
+                        splitIngredients = j.split('|')
+                        # TODO make many to many ingredients and recipeItems
+                        for i in splitIngredients:
+                            itemIngredientMapBuilder.append({"id": ingredientMapId, "recipe_item_id": recipeItemId, "ingredient_id": ingredientsIds[i.lower().replace('[[', '').replace(']]', '')]})
+                            ingredientMapId += 1
+                    recipeItemBuilder.append({"id": recipeItemId, "description": text[2:]})
+                    recipeItemId += 1
+                    text = next(recipesFile).strip()
+                    while len(text) < 3:
+                        text = next(recipesFile).strip()
+            if has:
+                while text != "==directions==":
+                    text = next(recipesFile).strip()
+                while len(text) == 0:
+                    text = next(recipesFile).strip()
+                while text[0] != "#":
+                    text = next(recipesFile).strip()
+                    while len(text) == 0:
+                        text = next(recipesFile).strip()
+                while len(text) < 3:
+                    text = next(recipesFile).strip()
+                while text[0] == "#" or text[0:3] == "===":
+                    # TODO get sub directions later
+                    if text[0:3] == "===":
+                        text = next(recipesFile).strip()
+                        while len(text) < 3:
+                            text = next(recipesFile).strip()
+                    else:
+                        directions = directions + '& ' + text[2:]
+                        text = next(recipesFile).strip()
+                        while len(text) < 3:
+                            text = next(recipesFile).strip()
+                while text != "==end==":
+                    if re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
+                        cats = re.findall(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text)
+                        for cat in cats:
+                            c = cat.lower().replace('[[category:', '').replace(' recipes]]', '')
+                            if c in categoriesIds:
+                                categoryMapBuilder.append({"id": categoryMapId, "recipe_id": recipeId, "category_id": categoriesIds[c]})
+                                categoryMapId += 1
+                    text = next(recipesFile).strip()
+                    recipeBuilder.append({"id": recipeId, "title": title, "directions": directions})
+                    recipeId += 1
+except(StopIteration):
+    print("Dont worry")
 recipesFile.close()
-ingredientsFile.close()
+# ingredientsFile.close()
 
-with open('recipeJSON.json', 'w') as fp:
-    json.dump(theRecipes, fp, sort_keys=True, indent=4)
+with open('category.json', 'w') as fp:
+    json.dump(categoryBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
 
-print(ingredientsList)
+with open('recipe.json', 'w') as fp:
+    json.dump(recipeBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
+
+with open('categoryMap.json', 'w') as fp:
+    json.dump(categoryMapBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
+
+with open('ingredient.json', 'w') as fp:
+    json.dump(ingredientBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
+
+with open('recipeIngredient.json', 'w') as fp:
+    json.dump(recipeItemBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
+
+with open('ingredientMap.json', 'w') as fp:
+    json.dump(itemIngredientMapBuilder, fp, sort_keys=True, indent=2, ensure_ascii=False)
