@@ -9,8 +9,8 @@ public class Category {
 
   @ColumnInfo(name="id")
   @PrimaryKey
-  public long id;
-  public String name;
+  private long id;
+  private String name;
 
   public long getId() {
     return id;

@@ -9,11 +9,11 @@ import java.util.List;
 public interface CategoryMapDao {
 
   @Insert
-  long insert(CategoryMap ingredientMap);
+  long insert(CategoryMap categoryMap);
 
   @Insert
-  List<Long> insert(CategoryMap... ingredients);
+  List<Long> insert(CategoryMap... categoryMaps);
 
   @Insert
-  List<Long> insert(List<CategoryMap> ingredients);
+  List<Long> insert(List<CategoryMap> categoryMapsList);
 }

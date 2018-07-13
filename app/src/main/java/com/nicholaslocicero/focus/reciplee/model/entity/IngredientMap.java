@@ -17,14 +17,14 @@ import android.arch.persistence.room.PrimaryKey;
         )
     },
     indices = {
-        @Index(value = {"id", "recipe_id", "ingredient_id"}, unique = true)
+        @Index(value = {"id", "recipe_item_id", "ingredient_id"}, unique = true)
     }
 )
 public class IngredientMap {
-  @PrimaryKey
+  @PrimaryKey(autoGenerate = true)
   private long id;
-  private long ingredientId;
-  private long recipeItemId;
+  private long ingredient_id;
+  private long recipe_item_id;
 
   public long getId() {
     return id;
@@ -34,19 +34,19 @@ public class IngredientMap {
     this.id = id;
   }
 
-  public long getIngredientId() {
-    return ingredientId;
+  public long getIngredient_id() {
+    return ingredient_id;
   }
 
-  public void setIngredientId(long ingredientId) {
-    this.ingredientId = ingredientId;
+  public void setIngredient_id(long ingredient_id) {
+    this.ingredient_id = ingredient_id;
   }
 
-  public long getRecipeItemId() {
-    return recipeItemId;
+  public long getRecipe_item_id() {
+    return recipe_item_id;
   }
 
-  public void setRecipeItemId(long recipeItemId) {
-    this.recipeItemId = recipeItemId;
+  public void setRecipe_item_id(long recipe_item_id) {
+    this.recipe_item_id = recipe_item_id;
   }
 }

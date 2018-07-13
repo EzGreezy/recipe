@@ -185,8 +185,8 @@ try:
                                 categoryMapBuilder.append({"id": categoryMapId, "recipe_id": recipeId, "category_id": categoriesIds[c]})
                                 categoryMapId += 1
                     text = next(recipesFile).strip()
-                    recipeBuilder.append({"id": recipeId, "title": title, "directions": directions})
-                    recipeId += 1
+                recipeBuilder.append({"id": recipeId, "title": title, "directions": directions})
+                recipeId += 1
 except(StopIteration):
     print("Dont worry")
 recipesFile.close()

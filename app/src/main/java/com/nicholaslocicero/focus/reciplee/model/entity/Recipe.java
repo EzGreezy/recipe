@@ -1,9 +1,7 @@
 package com.nicholaslocicero.focus.reciplee.model.entity;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 @Entity(tableName = "recipes")
 public class Recipe {
@@ -11,7 +9,7 @@ public class Recipe {
   @PrimaryKey
   private long id;
 
-  private String name;
+  private String title;
   private String directions;
 
   public long getId() {
@@ -22,11 +20,11 @@ public class Recipe {
   }
 
 
-  public String getName() {
-    return name;
+  public String getTitle() {
+    return title;
   }
-  public void setName(String name) {
-    this.name = name;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
 

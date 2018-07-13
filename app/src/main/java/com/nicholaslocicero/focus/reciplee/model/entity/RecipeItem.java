@@ -7,7 +7,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(
+@Entity(tableName = "recipe_item",
     foreignKeys = {
         @ForeignKey(
             entity = Recipe.class,
@@ -25,6 +25,8 @@ public class RecipeItem {
   private long id;
   @ColumnInfo(name = "recipe_id", index = true)
   private long recipe_id;
+  @ColumnInfo(name = "description")
+  private String description;
 
   public long getId() {
     return id;
@@ -36,7 +38,13 @@ public class RecipeItem {
   public long getRecipe_id() {
     return recipe_id;
   }
-  public void setRecipe_id(long recipe_id) {
-    this.recipe_id = recipe_id;
+  public void setRecipe_id(long recipe_id) { this.recipe_id = recipe_id; }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

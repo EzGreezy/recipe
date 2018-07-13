@@ -9,44 +9,45 @@ import android.arch.persistence.room.PrimaryKey;
     foreignKeys = {
     @ForeignKey(
         entity = Category.class,
-        parentColumns = "id", childColumns = "recipe_item_id"
+        parentColumns = "id", childColumns = "category_id"
     ),
     @ForeignKey(
         entity = Recipe.class,
-        parentColumns = "id", childColumns = "ingredient_id"
+        parentColumns = "id", childColumns = "recipe_id"
     )
 },
     indices = {
-        @Index(value = {"id", "recipe_id", "ingredient_id"}, unique = true)
+        @Index(value = {"id", "category_id", "recipe_id"}, unique = true)
     }
 
     )
 public class CategoryMap {
-  @PrimaryKey
+  @PrimaryKey(autoGenerate = true)
   private long id;
-  private long recipeId;
-  private long categoryId;
+  private long recipe_id;
+  private long category_id;
 
   public long getId() {
     return id;
   }
+
   public void setId(long id) {
     this.id = id;
   }
 
-  public long getRecipeId() {
-    return recipeId;
+  public long getRecipe_id() {
+    return recipe_id;
   }
 
-  public void setRecipeId(long recipId) {
-    this.recipeId = recipeId;
+  public void setRecipe_id(long recipId) {
+    this.recipe_id = recipe_id;
   }
 
-  public long getCategoryId() {
-    return categoryId;
+  public long getCategory_id() {
+    return category_id;
   }
 
-  public void setCategoryId(long categoryId) {
-    this.categoryId = categoryId;
+  public void setCategory_id(long category_id) {
+    this.category_id = category_id;
   }
 }
