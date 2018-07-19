@@ -2,6 +2,8 @@ package com.nicholaslocicero.focus.reciplee.model.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
 import java.util.List;
 
@@ -16,4 +18,10 @@ public interface RecipeDao {
 
   @Insert
   List<Long> insert(List<Recipe> recipes);
+
+  @Query("SELECT title FROM recipes")
+  List<String> selectRecipeTitles();
+
+  @Query("SELECT title FROM recipes WHERE title LIKE :text")
+  List<String> selectRecipeTitlesSpecific(String text);
 }

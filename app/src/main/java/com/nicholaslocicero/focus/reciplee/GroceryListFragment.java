@@ -1,20 +1,34 @@
 package com.nicholaslocicero.focus.reciplee;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
+import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -27,6 +41,8 @@ public class GroceryListFragment extends Fragment {
   private RecyclerView mIngredientRecyclerView;
   private List<Ingredient> mIngredientsList = new ArrayList<>();
   private ListAdapter mIngredientListAdapter;
+  private AutoCompleteAdapter recipeTitlesAdapter;
+  private List<String> recipeTitles = new ArrayList<>();
   private Button mRecipeButton;
   private EditText mRecipeText;
   private Button mIngredientButton;
@@ -36,39 +52,33 @@ public class GroceryListFragment extends Fragment {
 
 
 
+
   public GroceryListFragment() {
-    // Required empty public constructor
+
   }
+
+
 
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
+    new RecipesQuery().execute();
+
+
 
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
-    mIngredientText = view.findViewById(R.id.add_ingredient_text);
     mRecipeButton = view.findViewById(R.id.add_recipe_button);
-    mRecipeText = view.findViewById(R.id.add_recipe_text);
-    mIngredientListAdapter = new ListAdapter(mIngredientsList);
-    mIngredientRecyclerView.setAdapter(mIngredientListAdapter);
 
+
+    recipeTitlesAdapter = new AutoCompleteAdapter(getContext(),
+        android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
+    final AutoCompleteTextView addRecipeSuggestions = (AutoCompleteTextView) view.findViewById(R.id.add_recipe_text);
+    addRecipeSuggestions.setAdapter(recipeTitlesAdapter);
     refreshList();
-
-    mIngredientButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (!mRecipeText.getText().toString().equals("")) {
-
-          Ingredient ingredient = new Ingredient();
-          ingredient.setName(mIngredientText.getText().toString());
-          new IngredientInsert().execute(ingredient);
-          mIngredientText.setText("");
-        }
-      }
-    });
 
     // TODO SET UP AUTOTEXT VIEW FOR RECIPLEE_DB
 
@@ -92,6 +102,94 @@ public class GroceryListFragment extends Fragment {
 //    });
 
     return view;
+  }
+
+  public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable{
+
+    Context context;
+    int resource, textViewResourceId;
+    List<String> items;
+    List<String> tempItems;
+    List<String> suggestions;
+
+    public AutoCompleteAdapter(Context context, int resource, int textViewResourceId) {
+      super(context, resource, textViewResourceId);
+      this.context = context;
+      this.resource = resource;
+      this.textViewResourceId = textViewResourceId;
+      this.items = new ArrayList<String>();
+      this.tempItems = new ArrayList<String>(); // this makes the difference.
+      this.suggestions = new ArrayList<String>();
+    }
+
+    @Override
+    public void addAll(@NonNull Collection<? extends String> collection) {
+      //super.addAll(collection);
+      this.items.addAll(collection);
+    }
+
+//    @Override
+//    public void clear() {
+//      this.items.clear();
+//      this.suggestions.clear();
+//    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      View view = convertView;
+      if (convertView == null) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+      }
+      if (suggestions.size() > 0 && position < suggestions.size()) {
+        String recipe = suggestions.get(position);
+        if (recipe != null) {
+          ((TextView) view).setText(recipe);
+//        TextView lblName = (TextView) view.findViewById(R.id.add_recipe_text);
+//        if (lblName != null)
+//          lblName.setText(recipe);
+        }
+      }
+      return view;
+    }
+
+    @Override
+    public Filter getFilter() {
+      return nameFilter;
+    }
+
+    /**
+     * Custom Filter implementation for custom suggestions we provide.
+     */
+    Filter nameFilter = new Filter() {
+
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+        if (constraint != null) {
+          suggestions.clear();
+          for (String recipe : items) {
+            if (recipe.toLowerCase().contains(constraint.toString().toLowerCase())) {
+              suggestions.add(recipe);
+            }
+          }
+          FilterResults filterResults = new FilterResults();
+          filterResults.values = suggestions;
+          filterResults.count = suggestions.size();
+          return filterResults;
+        } else {
+          return new FilterResults();
+        }
+      }
+
+      @Override
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+        List<String> filterList = (ArrayList<String>) results.values;
+        if (results != null && results.count > 0) {
+          clear();
+          AutoCompleteAdapter.super.addAll(filterList);
+        }
+      }
+    };
   }
 
   private class ListHolder extends RecyclerView.ViewHolder {
@@ -158,6 +256,22 @@ public class GroceryListFragment extends Fragment {
         mIngredientListAdapter.notifyItemInserted(0);
         mIngredientRecyclerView.scrollToPosition(0);
       }
+    }
+  }
+
+  private class RecipesQuery extends AsyncTask<Void, Void, List<String>> {
+
+    @Override
+    protected List<String> doInBackground(Void... voids) {
+      return Reciplee.getInstance(getContext()).getRecipeDao().selectRecipeTitles();
+    }
+    @Override
+    protected void onPostExecute(List<String> recipes) {
+      recipeTitlesAdapter.clear();
+      recipeTitles.clear();
+      recipeTitles.addAll(recipes);
+      recipeTitlesAdapter.addAll(recipeTitles);
+      recipeTitlesAdapter.notifyDataSetChanged();
     }
   }
 
