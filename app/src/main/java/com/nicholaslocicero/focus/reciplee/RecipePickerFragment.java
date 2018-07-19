@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -17,11 +16,11 @@ public class RecipePickerFragment extends DialogFragment {
   public static final String EXTRA_RECIPE =
       "com.nicholaslocicero.focus.reciplee.recipe";
 
-  private static final String ARG_RECIPE_ID = "recipe_id";
+  private static final String ARG_RECIPE_TITLE = "recipe_title";
 
-  public static RecipePickerFragment newInstance(Long recipe_id) {
+  public static RecipePickerFragment newInstance(String recipe_title) {
     Bundle args = new Bundle();
-    args.putSerializable(ARG_RECIPE_ID, recipe_id);
+    args.putSerializable(ARG_RECIPE_TITLE, recipe_title);
 
     RecipePickerFragment fragment = new RecipePickerFragment();
     fragment.setArguments(args);
@@ -31,7 +30,7 @@ public class RecipePickerFragment extends DialogFragment {
   @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    Long recipe_id = (Long) getArguments().getSerializable(ARG_RECIPE_ID);
+    String recipe_title = (String) getArguments().getSerializable(ARG_RECIPE_TITLE);
 
     View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_recipe, null);
 
@@ -49,13 +48,13 @@ public class RecipePickerFragment extends DialogFragment {
         .create();
   }
 
-  private void sendResult(int resultCode, Long recipe_id) {
+  private void sendResult(int resultCode, String recipe_title) {
     if (getTargetFragment() == null) {
       return;
     }
 
     Intent intent = new Intent();
-    intent.putExtra(EXTRA_RECIPE, recipe_id);
+    intent.putExtra(EXTRA_RECIPE, recipe_title);
 
     getTargetFragment()
         .onActivityResult(getTargetRequestCode(), resultCode, intent);

@@ -3,21 +3,16 @@ package com.nicholaslocicero.focus.reciplee;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -27,7 +22,6 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
-import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +35,7 @@ public class GroceryListFragment extends Fragment {
 
   private static final String DIALOG_RECIPE = "DialogRecipe";
 
-  private static final int REQUEST_ID = 0;
+  private static final int REQUEST_RECIPE = 0;
 
   private RecyclerView mIngredientRecyclerView;
   private List<Ingredient> mIngredientsList = new ArrayList<>();
@@ -55,15 +49,9 @@ public class GroceryListFragment extends Fragment {
   private Random rng = new Random();
   private boolean startup = true;
 
-
-
-
   public GroceryListFragment() {
 
   }
-
-
-
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,13 +59,10 @@ public class GroceryListFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     new RecipesQuery().execute();
 
-
-
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
     mRecipeButton = view.findViewById(R.id.add_recipe_button);
-
 
     recipeTitlesAdapter = new AutoCompleteAdapter(getContext(),
         android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
@@ -88,9 +73,10 @@ public class GroceryListFragment extends Fragment {
     addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String recipeTitle = addRecipeSuggestions.getText().toString();
         FragmentManager manager = getFragmentManager();
-        RecipePickerFragment dialog = RecipePickerFragment.newInstance(100l);
-        dialog.setTargetFragment(GroceryListFragment.this, REQUEST_ID);
+        RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle);
+        dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
         dialog.show(manager, DIALOG_RECIPE);
       }
     });
@@ -118,15 +104,8 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     public void addAll(@NonNull Collection<? extends String> collection) {
-      //super.addAll(collection);
       this.items.addAll(collection);
     }
-
-//    @Override
-//    public void clear() {
-//      this.items.clear();
-//      this.suggestions.clear();
-//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -139,9 +118,6 @@ public class GroceryListFragment extends Fragment {
         String recipe = suggestions.get(position);
         if (recipe != null) {
           ((TextView) view).setText(recipe);
-//        TextView lblName = (TextView) view.findViewById(R.id.add_recipe_text);
-//        if (lblName != null)
-//          lblName.setText(recipe);
         }
       }
       return view;

@@ -22,6 +22,6 @@ public interface RecipeDao {
   @Query("SELECT title FROM recipes")
   List<String> selectRecipeTitles();
 
-  @Query("SELECT title FROM recipes WHERE title LIKE :text")
-  List<String> selectRecipeTitlesSpecific(String text);
+  @Query("SELECT id FROM recipes")
+  List<Long> selectRecipeIds();
 }
