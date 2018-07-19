@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -37,6 +38,10 @@ import java.util.Random;
  * A simple {@link Fragment} subclass.
  */
 public class GroceryListFragment extends Fragment {
+
+  private static final String DIALOG_RECIPE = "DialogRecipe";
+
+  private static final int REQUEST_ID = 0;
 
   private RecyclerView mIngredientRecyclerView;
   private List<Ingredient> mIngredientsList = new ArrayList<>();
@@ -80,26 +85,15 @@ public class GroceryListFragment extends Fragment {
     addRecipeSuggestions.setAdapter(recipeTitlesAdapter);
     refreshList();
 
-    // TODO SET UP AUTOTEXT VIEW FOR RECIPLEE_DB
-
-//    mRecipeButton.setOnClickListener(new OnClickListener() {
-//      @Override
-//      public void onClick(View v) {
-//        try {
-//
-//        } catch (Exception e) {
-//
-//        }
-//        if (!mIngredientText.getText().toString().equals("")) {
-//          Ingredient ingredient = new Ingredient();
-//          ingredient.setName(mIngredientText.getText().toString());
-//          ingredient.setAmount(Integer.toString(rng.nextInt(10)));
-//          ingredient.setMeasurement("cups");
-//          new IngredientInsert().execute(ingredient);
-//          mIngredientText.setText("");
-//        }
-//      }
-//    });
+    addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FragmentManager manager = getFragmentManager();
+        RecipePickerFragment dialog = RecipePickerFragment.newInstance(100l);
+        dialog.setTargetFragment(GroceryListFragment.this, REQUEST_ID);
+        dialog.show(manager, DIALOG_RECIPE);
+      }
+    });
 
     return view;
   }
