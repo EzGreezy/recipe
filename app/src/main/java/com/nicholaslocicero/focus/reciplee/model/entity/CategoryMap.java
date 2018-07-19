@@ -1,5 +1,6 @@
 package com.nicholaslocicero.focus.reciplee.model.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
@@ -24,7 +25,9 @@ import android.arch.persistence.room.PrimaryKey;
 public class CategoryMap {
   @PrimaryKey(autoGenerate = true)
   private long id;
+  @ColumnInfo(name = "recipe_id")
   private long recipe_id;
+  @ColumnInfo(name = "category_id")
   private long category_id;
 
   public long getId() {

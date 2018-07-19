@@ -2,9 +2,16 @@ package com.nicholaslocicero.focus.reciplee.model.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "categories")
+@Entity(tableName = "categories",
+    indices = {
+        @Index(value = {"id"}, unique = true)
+    }
+
+)
 public class Category {
 
   @ColumnInfo(name="id")

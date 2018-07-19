@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "eb87a9248620ae6aa1e069b7074597ed",
+    "identityHash": "a530e5bf7a093ce4d4a3429650712725",
     "entities": [
       {
         "tableName": "categories",
@@ -27,7 +27,16 @@
           ],
           "autoGenerate": false
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_categories_id",
+            "unique": true,
+            "columnNames": [
+              "id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_categories_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -395,7 +404,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"eb87a9248620ae6aa1e069b7074597ed\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a530e5bf7a093ce4d4a3429650712725\")"
     ]
   }
 }
