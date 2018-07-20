@@ -33,6 +33,7 @@ import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -256,6 +257,7 @@ public class GroceryListFragment extends Fragment {
       for (String key : shoppingListMap.keySet()) {
         shoppingListIngredients.add(key);
       }
+      Collections.sort(shoppingListIngredients);
       adapter.notifyDataSetChanged();
       Log.e("keys", shoppingListIngredients.toString());
 //      adapter.notifyDataSetChanged();

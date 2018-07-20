@@ -165,7 +165,8 @@ try:
                     itemIngredientMapBuilderTemp = []
             if has:
                 for i in recipeItemBuilderTemp:
-                    recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId, "description": i[0]["description"]})
+                    recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,
+                                              "description": '<li>' + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</li>"})
                     for j in i[1]:
                         itemIngredientMapBuilder.append({"recipe_item_id": recipeItemId, "ingredient_id": j["ingredient_id"]})
                     recipeItemId += 1
@@ -177,6 +178,8 @@ try:
                     text = next(recipesFile).strip()
                     while len(text) == 0:
                         text = next(recipesFile).strip()
+                    if text == "==end==":
+                        break
                 while len(text) < 3:
                     text = next(recipesFile).strip()
                 while text[0] == "#" or text[0:3] == "===":
@@ -190,6 +193,8 @@ try:
                         text = next(recipesFile).strip()
                         while len(text) < 3:
                             text = next(recipesFile).strip()
+                        if text[0] == "=":
+                            break
                 while text != "==end==":
                     if re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
                         cats = re.findall(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text)

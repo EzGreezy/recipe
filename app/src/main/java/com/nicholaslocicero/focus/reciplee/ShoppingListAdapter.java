@@ -2,6 +2,7 @@ package com.nicholaslocicero.focus.reciplee;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,7 @@ public class ShoppingListAdapter extends BaseExpandableListAdapter {
       convertView = inflater.inflate(R.layout.child_layout, parentView, false);
     }
     TextView childTextView = (TextView) convertView.findViewById(R.id.child_txt);
-    childTextView.setText(childTitle);
+    childTextView.setText(Html.fromHtml(childTitle));
     return convertView;
   }
 
