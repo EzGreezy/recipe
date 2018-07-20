@@ -30,6 +30,7 @@ import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.IngredientsMapRecipeItems;
+import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -311,7 +312,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
-      // TODO change to shopping list insert and then repopulate
+      // TODO insert shopping list then repopulate
 
 
     }
@@ -326,15 +327,16 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected void onPostExecute(List<ShoppingItem> shoppingItems) {
-      for (ShoppingItem item : shoppingItems) {
-        if (shoppingList.containsKey(item.ge())) {
-          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
-        } else {
-          List<String> recipeItems = new ArrayList<>();
-          recipeItems.add(item.getRecipe_item());
-          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
-        }
-      }
+      // TODO decide if this is needed after above and below, perhaps just an insert from Ingredients and Recipes
+//      for (ShoppingItem item : shoppingItems) {
+//        if (shoppingList.containsKey(item.ge())) {
+//          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
+//        } else {
+//          List<String> recipeItems = new ArrayList<>();
+//          recipeItems.add(item.getRecipe_item());
+//          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
+//        }
+//      }
     }
   }
 
@@ -342,6 +344,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected List<ShoppingListAssembled> doInBackground(List<ShoppingItem>... lists) {
+      // TODO Assemble shopping list Map<String ingredient, List<String> items>
       return null;
     }
   }
