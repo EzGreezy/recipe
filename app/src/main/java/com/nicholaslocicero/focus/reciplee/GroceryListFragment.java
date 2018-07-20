@@ -28,6 +28,7 @@ import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
+import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.IngredientsMapRecipeItems;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +59,7 @@ public class GroceryListFragment extends Fragment {
   private boolean startup = true;
   private String recipeTitle = "";
   private String recipeDirections = "";
-  private Map<String,List<String>> recipeIngredientsAndItems = new HashMap<>();
+  private Map<String,List<String>> shoppingList;
 
   public GroceryListFragment() {
 
@@ -69,6 +70,10 @@ public class GroceryListFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     new RecipesQuery().execute();
+
+    if (shoppingList == null) {
+      new ShoppingListPopulate().execute();
+    }
 
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -306,8 +311,23 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
-      for (IngredientsMapRecipeItems item : ingredientsMapRecipeItems) {
-        if (recipeIngredientsAndItems.containsKey(item.getIngredient())) {
+      // TODO change to shopping list insert and then repopulate
+
+
+    }
+  }
+
+  private class ShoppingListPopulate extends AsyncTask<Void, Void, List<ShoppingItem>> {
+
+    @Override
+    protected List<ShoppingItem> doInBackground(Void... voids) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().select();
+    }
+
+    @Override
+    protected void onPostExecute(List<ShoppingItem> shoppingItems) {
+      for (ShoppingItem item : shoppingItems) {
+        if (shoppingList.containsKey(item.ge())) {
           recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
         } else {
           List<String> recipeItems = new ArrayList<>();
@@ -315,7 +335,14 @@ public class GroceryListFragment extends Fragment {
           recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
         }
       }
+    }
+  }
 
+  private class ConstructShoppingList extends AsyncTask<List<ShoppingItem>, Void, List<ShoppingListAssembled>> {
+
+    @Override
+    protected List<ShoppingListAssembled> doInBackground(List<ShoppingItem>... lists) {
+      return null;
     }
   }
 

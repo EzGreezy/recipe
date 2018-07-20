@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity(
-  tableName = "grocery_list",
+  tableName = "shopping_list",
   foreignKeys = {
     @ForeignKey(
       entity = Ingredient.class,
@@ -29,21 +29,12 @@ public class ShoppingItem {
   private long id;
 
   @ColumnInfo(name = "ingredient_id", index = true)
-  private long ingredient_id;
+  private Long ingredient_id;
+  @ColumnInfo(name = "ingredient_item")
+  private String ingredient_item;
   @ColumnInfo(name = "recipe_id", index = true)
-  private long recipe_id;
+  private Long recipe_id;
   private int position;
-
-  public int getPosition() {
-    return position;
-  }
-
-  public void setPosition(int position) {
-    this.position = position;
-  }
-
-  @NonNull
-  private Float quantity;
 
   public long getId() {
     return id;
@@ -61,6 +52,14 @@ public class ShoppingItem {
     this.ingredient_id = ingredient_id;
   }
 
+  public String getIngredient_item() {
+    return ingredient_item;
+  }
+
+  public void setIngredient_item(String ingredient_item) {
+    this.ingredient_item = ingredient_item;
+  }
+
   public long getRecipe_id() {
     return recipe_id;
   }
@@ -69,12 +68,11 @@ public class ShoppingItem {
     this.recipe_id = recipe_id;
   }
 
-  @NonNull
-  public Float getQuantity() {
-    return quantity;
+  public int getPosition() {
+    return position;
   }
 
-  public void setQuantity(@NonNull Float quantity) {
-    this.quantity = quantity;
+  public void setPosition(int position) {
+    this.position = position;
   }
 }
