@@ -24,4 +24,7 @@ public interface RecipeDao {
 
   @Query("SELECT id FROM recipes")
   List<Long> selectRecipeIds();
+
+  @Query("SELECT directions FROM recipes WHERE title = :title")
+  List<String> selectDirectionsFromTitle(String title);
 }

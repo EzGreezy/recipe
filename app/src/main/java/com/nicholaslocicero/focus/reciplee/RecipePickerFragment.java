@@ -17,10 +17,12 @@ public class RecipePickerFragment extends DialogFragment {
       "com.nicholaslocicero.focus.reciplee.recipe";
 
   private static final String ARG_RECIPE_TITLE = "recipe_title";
+  private static final String ARG_RECIPE_DIRECTIONS = "recipe_directions";
 
-  public static RecipePickerFragment newInstance(String recipe_title) {
+  public static RecipePickerFragment newInstance(String recipe_title, String recipe_directions) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_RECIPE_TITLE, recipe_title);
+    args.putSerializable(ARG_RECIPE_DIRECTIONS, recipe_directions);
 
     RecipePickerFragment fragment = new RecipePickerFragment();
     fragment.setArguments(args);
@@ -31,20 +33,21 @@ public class RecipePickerFragment extends DialogFragment {
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     String recipe_title = (String) getArguments().getSerializable(ARG_RECIPE_TITLE);
+    String recipe_directions = (String) getArguments().getSerializable(ARG_RECIPE_DIRECTIONS);
 
     View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_recipe, null);
 
     return new AlertDialog.Builder(getActivity())
         .setView(v)
-        .setTitle("Temp test")
-        .setMessage("Temp\nWith a new\nLine?\n* Ingredient 1\n* Ingredient 2\n* Ingredient 3\n....")
+        .setTitle(recipe_title)
+        .setMessage(recipe_directions)
         .setPositiveButton(android.R.string.ok,
             new OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-              }
-            })
+                }
+        })
         .create();
   }
 

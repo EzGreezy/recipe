@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,6 +50,8 @@ public class GroceryListFragment extends Fragment {
   private EditText mIngredientText;
   private Random rng = new Random();
   private boolean startup = true;
+  private String recipeTitle = "";
+  private String recipeDirections = "";
 
   public GroceryListFragment() {
 
@@ -73,11 +77,8 @@ public class GroceryListFragment extends Fragment {
     addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String recipeTitle = addRecipeSuggestions.getText().toString();
-        FragmentManager manager = getFragmentManager();
-        RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle);
-        dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
-        dialog.show(manager, DIALOG_RECIPE);
+        recipeTitle = ((TextView) view).getText().toString();
+        new RecipeDirections().execute(recipeTitle);
       }
     });
 
@@ -242,6 +243,34 @@ public class GroceryListFragment extends Fragment {
       recipeTitles.addAll(recipes);
       recipeTitlesAdapter.addAll(recipeTitles);
       recipeTitlesAdapter.notifyDataSetChanged();
+    }
+  }
+
+  private class RecipeDirections extends AsyncTask<String, Void, List<String>> {
+
+    @Override
+    protected List<String> doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getRecipeDao().selectDirectionsFromTitle(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(List<String> strings) {
+      recipeDirections = strings.get(0);
+      recipeDirections = recipeDirections.replace("& ", "\n\n - ");
+      AlertDialog.Builder dialog = new Builder(getContext());
+      View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
+      TextView title = (TextView) dialogView.findViewById(R.id.recipe_title);
+      TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
+      recipeTitle = recipeTitle + "\n\nDirections";
+      title.setText(recipeTitle);
+      directions.setText(recipeDirections);
+      dialog.setView(dialogView);
+      AlertDialog dialogBuilt = dialog.create();
+      dialogBuilt.show();
+//      FragmentManager manager = getFragmentManager();
+//      RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle.substring(2) + " Directions", recipeDirections);
+//      dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
+//      dialog.show(manager, DIALOG_RECIPE);
     }
   }
 
