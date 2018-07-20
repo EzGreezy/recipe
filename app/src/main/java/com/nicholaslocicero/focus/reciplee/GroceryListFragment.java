@@ -27,9 +27,13 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
+import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
+import com.nicholaslocicero.focus.reciplee.model.pojo.IngredientsMapRecipeItems;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -54,6 +58,7 @@ public class GroceryListFragment extends Fragment {
   private boolean startup = true;
   private String recipeTitle = "";
   private String recipeDirections = "";
+  private Map<String,List<String>> recipeIngredientsAndItems = new HashMap<>();
 
   public GroceryListFragment() {
 
@@ -269,12 +274,6 @@ public class GroceryListFragment extends Fragment {
       // TODO set onclick listeners for buttons (to add recipe or go back)
       title.setText(recipeTitle);
       directions.setText(Html.fromHtml(recipeDirections), BufferType.SPANNABLE);
-      add.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
-      });
       dialog.setView(dialogView);
       final AlertDialog dialogBuilt = dialog.create();
       dialogBuilt.show();
@@ -284,10 +283,39 @@ public class GroceryListFragment extends Fragment {
           dialogBuilt.dismiss();
         }
       });
+      add.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          new IngredientsAndRecipes().execute(recipeTitle);
+          dialogBuilt.dismiss();
+        }
+      });
 //      FragmentManager manager = getFragmentManager();
 //      RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle.substring(2) + " Directions", recipeDirections);
 //      dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
 //      dialog.show(manager, DIALOG_RECIPE);
+    }
+  }
+
+  private class IngredientsAndRecipes extends AsyncTask<String, Void, List<IngredientsMapRecipeItems>> {
+
+    @Override
+    protected List<IngredientsMapRecipeItems> doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getIngredientDao().selectIngredientsAndItems(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
+      for (IngredientsMapRecipeItems item : ingredientsMapRecipeItems) {
+        if (recipeIngredientsAndItems.containsKey(item.getIngredient())) {
+          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
+        } else {
+          List<String> recipeItems = new ArrayList<>();
+          recipeItems.add(item.getRecipe_item());
+          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
+        }
+      }
+
     }
   }
 

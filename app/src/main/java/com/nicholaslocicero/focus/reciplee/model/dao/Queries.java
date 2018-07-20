@@ -22,4 +22,11 @@ public class Queries {
           + "ORDER BY "
           + "  shopping_item.position"
           + "GROUP BY ingredient.name";
+
+  public static final String INGREDIENTS_FOR_RECIPES =
+      "SELECT ingredients.name AS ingredient, recipe_item.description AS recipe_item "
+          + "FROM ingredients "
+          + "LEFT JOIN ingredients_map ON ingredients.id = ingredients_map.ingredient_id "
+          + "LEFT JOIN recipe_item ON ingredients_map.recipe_item_id = recipe_item.id "
+          + "WHERE recipe_item.recipe_id = recipes.id AND recipes.title = :title";
 }
