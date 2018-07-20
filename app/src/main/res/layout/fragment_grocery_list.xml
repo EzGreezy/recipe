@@ -17,12 +17,12 @@
       android:layout_weight="1"
       android:hint="@string/search_for_a_recipe"
       android:inputType="textAutoComplete|textAutoCorrect"/>
-    <Button
-      android:id="@+id/add_recipe_button"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_weight="0"
-      android:text="Search"/>
+    <!--<Button-->
+      <!--android:id="@+id/add_recipe_button"-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="match_parent"-->
+      <!--android:layout_weight="0"-->
+      <!--android:text="Search"/>-->
   </LinearLayout>
 
   <LinearLayout

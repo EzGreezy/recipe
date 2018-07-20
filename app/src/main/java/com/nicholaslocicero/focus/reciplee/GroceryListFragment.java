@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -46,7 +47,6 @@ public class GroceryListFragment extends Fragment {
   private ListAdapter mIngredientListAdapter;
   private AutoCompleteAdapter recipeTitlesAdapter;
   private List<String> recipeTitles = new ArrayList<>();
-  private Button mRecipeButton;
   private EditText mRecipeText;
   private Button mIngredientButton;
   private EditText mIngredientText;
@@ -68,7 +68,6 @@ public class GroceryListFragment extends Fragment {
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mIngredientButton = view.findViewById(R.id.add_ingredient_button);
-    mRecipeButton = view.findViewById(R.id.add_recipe_button);
 
     recipeTitlesAdapter = new AutoCompleteAdapter(getContext(),
         android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
@@ -81,6 +80,7 @@ public class GroceryListFragment extends Fragment {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         recipeTitle = ((TextView) view).getText().toString();
         new RecipeDirections().execute(recipeTitle);
+        addRecipeSuggestions.requestFocus();
       }
     });
 
@@ -264,12 +264,26 @@ public class GroceryListFragment extends Fragment {
       View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
       TextView title = (TextView) dialogView.findViewById(R.id.recipe_title);
       TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
+      Button add = (Button) dialogView.findViewById(R.id.add);
+      Button back = (Button) dialogView.findViewById(R.id.back);
       // TODO set onclick listeners for buttons (to add recipe or go back)
       title.setText(recipeTitle);
       directions.setText(Html.fromHtml(recipeDirections), BufferType.SPANNABLE);
+      add.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+      });
       dialog.setView(dialogView);
-      AlertDialog dialogBuilt = dialog.create();
+      final AlertDialog dialogBuilt = dialog.create();
       dialogBuilt.show();
+      back.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          dialogBuilt.dismiss();
+        }
+      });
 //      FragmentManager manager = getFragmentManager();
 //      RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle.substring(2) + " Directions", recipeDirections);
 //      dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
