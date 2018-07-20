@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import java.util.ArrayList;
@@ -257,15 +259,14 @@ public class GroceryListFragment extends Fragment {
     protected void onPostExecute(List<String> strings) {
       // TODO add ingredients to recipe dialog
       recipeDirections = strings.get(0);
-      recipeDirections = "Directions:\n" + recipeDirections.replace("& ", "\n- ");
+      recipeDirections = "<h4>Directions</h4>" + recipeDirections.replace("& ", "\n- ");
       AlertDialog.Builder dialog = new Builder(getContext());
       View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
       TextView title = (TextView) dialogView.findViewById(R.id.recipe_title);
       TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
       // TODO set onclick listeners for buttons (to add recipe or go back)
-      recipeTitle = recipeTitle + "Directions";
       title.setText(recipeTitle);
-      directions.setText(recipeDirections);
+      directions.setText(Html.fromHtml(recipeDirections), BufferType.SPANNABLE);
       dialog.setView(dialogView);
       AlertDialog dialogBuilt = dialog.create();
       dialogBuilt.show();

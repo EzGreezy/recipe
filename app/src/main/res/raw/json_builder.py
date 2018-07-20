@@ -22,9 +22,6 @@ d = enchant.Dict("en_US")
 theRecipes = []
 
 recipesFile = open('recipes.txt','r')
-# ingredientsFile = open('ingredients.txt', 'r')
-# ingredientsString = ingredientsFile.nextLine()
-# print(ingredientsString)
 
 categoryBuilder = []
 recipeBuilder = []
@@ -119,7 +116,7 @@ try:
     while True:
         text = next(recipesFile).strip()
         title = ""
-        directions = ""
+        directions = "<p><ol>"
         recipeIngredients = []
         ingredients = []
         categories = []
@@ -189,7 +186,7 @@ try:
                         while len(text) < 3:
                             text = next(recipesFile).strip()
                     else:
-                        directions = directions + '& ' + text[2:]
+                        directions = directions + '<li>' + text[2:] + '</li>'
                         text = next(recipesFile).strip()
                         while len(text) < 3:
                             text = next(recipesFile).strip()
@@ -201,7 +198,9 @@ try:
                             if c in categoriesIds:
                                 categoryMapBuilder.append({"recipe_id": recipeId, "category_id": categoriesIds[c]})
                     text = next(recipesFile).strip()
-                recipeBuilder.append({"id": recipeId, "title": title, "directions": directions})
+                recipeBuilder.append({"id": recipeId,
+                                      "title": title,
+                                      "directions": directions.replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</ol></p>"})
                 recipeId += 1
 except(StopIteration):
     print("Dont worry")
