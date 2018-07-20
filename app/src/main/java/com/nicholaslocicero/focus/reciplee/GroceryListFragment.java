@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -34,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -61,7 +61,10 @@ public class GroceryListFragment extends Fragment {
   private boolean startup = true;
   private String recipeTitle = "";
   private String recipeDirections = "";
-  private Map<String,List<String>> shoppingList = new HashMap<>();
+  private Map<String,List<String>> shoppingListMap = new HashMap<>();
+  List<String> shoppingListIngredients = new ArrayList<>();
+  ExpandableListView shoppingListExpandable;
+  ShoppingListAdapter adapter;
 
   public GroceryListFragment() {
 
@@ -72,20 +75,18 @@ public class GroceryListFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     new RecipesQuery().execute();
+    shoppingListExpandable = (ExpandableListView) view.findViewById(R.id.shopping_expandable_list_view);
 
-//    if (shoppingList == null) {
-//      new ShoppingListPopulate().execute();
-//    }
-
-    mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
-    mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    mIngredientButton = view.findViewById(R.id.add_ingredient_button);
+    // possible issue here, check how we did it with recipeTitlesAdapter.addAll(___) in AsyncTask
+    adapter = new ShoppingListAdapter(getContext(), shoppingListMap, shoppingListIngredients);
+    shoppingListExpandable.setAdapter(adapter);
+    refreshShoppingList();
 
     recipeTitlesAdapter = new AutoCompleteAdapter(getContext(),
         android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
     final AutoCompleteTextView addRecipeSuggestions = (AutoCompleteTextView) view.findViewById(R.id.add_recipe_text);
     addRecipeSuggestions.setAdapter(recipeTitlesAdapter);
-//    refreshShoppingList();
+
 
     addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
       @Override
@@ -233,37 +234,31 @@ public class GroceryListFragment extends Fragment {
     }
     @Override
     protected void onPostExecute(List<ShoppingListAssembled> shoppingItems) {
+      shoppingListMap.clear();
+      shoppingListIngredients.clear();
       for (ShoppingListAssembled item : shoppingItems) {
-        if (shoppingList.containsKey(item.getIngredient())) {
+        if (shoppingListMap.containsKey(item.getIngredient())) {
           if (item.getDescription() != null) {
-            shoppingList.get(item.getIngredient()).add(item.getDescription());
+            shoppingListMap.get(item.getIngredient()).add(item.getDescription());
           } else {
-            shoppingList.get(item.getIngredient()).add(item.getItem());
+            shoppingListMap.get(item.getIngredient()).add(item.getItem());
           }
         } else {
           if (item.getDescription() != null) {
-            shoppingList.put(item.getIngredient(), new ArrayList<String>());
-            shoppingList.get(item.getIngredient()).add(item.getDescription());
+            shoppingListMap.put(item.getIngredient(), new ArrayList<String>());
+            shoppingListMap.get(item.getIngredient()).add(item.getDescription());
           } else {
-            shoppingList.put(item.getIngredient(), new ArrayList<String>());
-            shoppingList.get(item.getIngredient()).add(item.getItem());
+            shoppingListMap.put(item.getIngredient(), new ArrayList<String>());
+            shoppingListMap.get(item.getIngredient()).add(item.getItem());
           }
         }
       }
-      Iterator it = shoppingList.entrySet().iterator();
-      while (it.hasNext()) {
-        Map.Entry pair = (Map.Entry)it.next();
-        Log.e(pair.getKey().toString(), pair.getValue().toString());
-        it.remove(); // avoids a ConcurrentModificationException
+      for (String key : shoppingListMap.keySet()) {
+        shoppingListIngredients.add(key);
       }
-//      mIngredientsList.clear();
-//      mIngredientsList.addAll(ingredients);
-//      if (startup) {
-//        startup = false;
-//      } else {
-//        mIngredientListAdapter.notifyItemInserted(0);
-//        mIngredientRecyclerView.scrollToPosition(0);
-//      }
+      adapter.notifyDataSetChanged();
+      Log.e("keys", shoppingListIngredients.toString());
+//      adapter.notifyDataSetChanged();
     }
   }
 
@@ -366,7 +361,7 @@ public class GroceryListFragment extends Fragment {
 //    protected void onPostExecute(List<ShoppingItem> shoppingItems) {
 //      // TODO decide if this is needed after above and below, perhaps just an insert from Ingredients and Recipes
 ////      for (ShoppingItem item : shoppingItems) {
-////        if (shoppingList.containsKey(item.ge())) {
+////        if (shoppingListMap.containsKey(item.ge())) {
 ////          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
 ////        } else {
 ////          List<String> recipeItems = new ArrayList<>();
