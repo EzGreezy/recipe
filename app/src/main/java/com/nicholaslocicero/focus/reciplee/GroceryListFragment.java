@@ -5,12 +5,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,13 +27,14 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
-import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
+import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
-import com.nicholaslocicero.focus.reciplee.model.pojo.IngredientsMapRecipeItems;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -60,7 +61,7 @@ public class GroceryListFragment extends Fragment {
   private boolean startup = true;
   private String recipeTitle = "";
   private String recipeDirections = "";
-  private Map<String,List<String>> shoppingList;
+  private Map<String,List<String>> shoppingList = new HashMap<>();
 
   public GroceryListFragment() {
 
@@ -84,7 +85,7 @@ public class GroceryListFragment extends Fragment {
         android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
     final AutoCompleteTextView addRecipeSuggestions = (AutoCompleteTextView) view.findViewById(R.id.add_recipe_text);
     addRecipeSuggestions.setAdapter(recipeTitlesAdapter);
-    refreshList();
+//    refreshShoppingList();
 
     addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
       @Override
@@ -220,26 +221,49 @@ public class GroceryListFragment extends Fragment {
     }
   }
 
-  private void refreshList() {
-    new IngredientsQuery().execute();
+  private void refreshShoppingList() {
+    new ShoppingItemQuery().execute();
   }
 
-  private class IngredientsQuery extends AsyncTask<Void, Void, List<Ingredient>> {
+  private class ShoppingItemQuery extends AsyncTask<Void, Void, List<ShoppingListAssembled>> {
 
     @Override
-    protected List<Ingredient> doInBackground(Void... voids) {
-      return Reciplee.getInstance(getContext()).getIngredientDao().select();
+    protected List<ShoppingListAssembled> doInBackground(Void... voids) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().assembleShoppingList();
     }
     @Override
-    protected void onPostExecute(List<Ingredient> ingredients) {
-      mIngredientsList.clear();
-      mIngredientsList.addAll(ingredients);
-      if (startup) {
-        startup = false;
-      } else {
-        mIngredientListAdapter.notifyItemInserted(0);
-        mIngredientRecyclerView.scrollToPosition(0);
+    protected void onPostExecute(List<ShoppingListAssembled> shoppingItems) {
+      for (ShoppingListAssembled item : shoppingItems) {
+        if (shoppingList.containsKey(item.getIngredient())) {
+          if (item.getDescription() != null) {
+            shoppingList.get(item.getIngredient()).add(item.getDescription());
+          } else {
+            shoppingList.get(item.getIngredient()).add(item.getItem());
+          }
+        } else {
+          if (item.getDescription() != null) {
+            shoppingList.put(item.getIngredient(), new ArrayList<String>());
+            shoppingList.get(item.getIngredient()).add(item.getDescription());
+          } else {
+            shoppingList.put(item.getIngredient(), new ArrayList<String>());
+            shoppingList.get(item.getIngredient()).add(item.getItem());
+          }
+        }
       }
+      Iterator it = shoppingList.entrySet().iterator();
+      while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        Log.e(pair.getKey().toString(), pair.getValue().toString());
+        it.remove(); // avoids a ConcurrentModificationException
+      }
+//      mIngredientsList.clear();
+//      mIngredientsList.addAll(ingredients);
+//      if (startup) {
+//        startup = false;
+//      } else {
+//        mIngredientListAdapter.notifyItemInserted(0);
+//        mIngredientRecyclerView.scrollToPosition(0);
+//      }
     }
   }
 
@@ -292,8 +316,8 @@ public class GroceryListFragment extends Fragment {
       add.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-//          new IngredientsAndRecipes().execute(recipeTitle);
-//          dialogBuilt.dismiss();
+          new GetRecipe().execute(recipeTitle);
+          dialogBuilt.dismiss();
         }
       });
 //      FragmentManager manager = getFragmentManager();
@@ -303,20 +327,33 @@ public class GroceryListFragment extends Fragment {
     }
   }
 
-//  private class IngredientsAndRecipes extends AsyncTask<String, Void, List<IngredientsMapRecipeItems>> {
-//
-//    @Override
-//    protected List<IngredientsMapRecipeItems> doInBackground(String... strings) {
-//      return Reciplee.getInstance(getContext()).getIngredientDao().selectIngredientsAndItems(strings[0]);
-//    }
-//
-//    @Override
-//    protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
-//      // TODO insert shopping list then repopulate
-//
-//
-//    }
-//  }
+  private class GetRecipe extends AsyncTask<String, Void, List<Recipe>> {
+
+    @Override
+    protected List<Recipe> doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getRecipeDao().selectRecipeByTitle(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(List<Recipe> recipes) {
+      ShoppingItem shoppingItem = new ShoppingItem();
+      shoppingItem.setRecipe_id(recipes.get(0).getId());
+      new InsertShoppingRecipe().execute(shoppingItem);
+    }
+  }
+
+  private class InsertShoppingRecipe extends AsyncTask<ShoppingItem, Void, Long> {
+
+    @Override
+    protected Long doInBackground(ShoppingItem... shoppingItems) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().insert(shoppingItems[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Long recipes) {
+      refreshShoppingList();
+    }
+  }
 
 //  private class ShoppingListPopulate extends AsyncTask<Void, Void, List<ShoppingItem>> {
 //
@@ -358,7 +395,7 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected void onPostExecute(Long aLong) {
-      refreshList();
+      refreshShoppingList();
     }
   }
 }

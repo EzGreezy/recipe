@@ -1,10 +1,15 @@
 package com.nicholaslocicero.focus.reciplee.model.pojo;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Relation;
+import java.util.List;
+
 public class ShoppingListAssembled {
 
-  String ingredient;
-  String shopping_item;
-  String recipe_item;
+  private String title;
+  private String ingredient;
+  private String item;
+  private String description;
 
   public String getIngredient() {
     return ingredient;
@@ -14,19 +19,27 @@ public class ShoppingListAssembled {
     this.ingredient = ingredient;
   }
 
-  public String getShopping_item() {
-    return shopping_item;
+  public String getTitle() {
+    return title;
   }
 
-  public void setShopping_item(String shopping_item) {
-    this.shopping_item = shopping_item;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
-  public String getRecipe_item() {
-    return recipe_item;
+  public String getItem() {
+    return item;
   }
 
-  public void setRecipe_item(String recipe_item) {
-    this.recipe_item = recipe_item;
+  public void setItem(String item) {
+    this.item = item;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }
