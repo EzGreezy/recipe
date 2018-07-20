@@ -34,7 +34,6 @@ public class ShoppingItem {
   private String ingredient_item;
   @ColumnInfo(name = "recipe_id", index = true)
   private Long recipe_id;
-  private int position;
 
   public long getId() {
     return id;
@@ -44,11 +43,11 @@ public class ShoppingItem {
     this.id = id;
   }
 
-  public long getIngredient_id() {
+  public Long getIngredient_id() {
     return ingredient_id;
   }
 
-  public void setIngredient_id(long ingredient_id) {
+  public void setIngredient_id(Long ingredient_id) {
     this.ingredient_id = ingredient_id;
   }
 
@@ -60,19 +59,11 @@ public class ShoppingItem {
     this.ingredient_item = ingredient_item;
   }
 
-  public long getRecipe_id() {
+  public Long getRecipe_id() {
     return recipe_id;
   }
 
-  public void setRecipe_id(long recipe_id) {
+  public void setRecipe_id(Long recipe_id) {
     this.recipe_id = recipe_id;
-  }
-
-  public int getPosition() {
-    return position;
-  }
-
-  public void setPosition(int position) {
-    this.position = position;
   }
 }

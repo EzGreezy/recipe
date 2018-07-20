@@ -21,7 +21,4 @@ public interface ShoppingItemDao {
 
   @Query("SELECT * FROM shopping_list")
   List<ShoppingItem> select();
-
-  @Query("SELECT * FROM shopping_list")
-  List<ShoppingItem> select();
 }

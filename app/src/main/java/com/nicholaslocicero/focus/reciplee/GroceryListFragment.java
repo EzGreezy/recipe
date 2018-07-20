@@ -72,9 +72,9 @@ public class GroceryListFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     new RecipesQuery().execute();
 
-    if (shoppingList == null) {
-      new ShoppingListPopulate().execute();
-    }
+//    if (shoppingList == null) {
+//      new ShoppingListPopulate().execute();
+//    }
 
     mIngredientRecyclerView = (RecyclerView) view.findViewById(R.id.ingredient_list_recycler_view);
     mIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -292,8 +292,8 @@ public class GroceryListFragment extends Fragment {
       add.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-          new IngredientsAndRecipes().execute(recipeTitle);
-          dialogBuilt.dismiss();
+//          new IngredientsAndRecipes().execute(recipeTitle);
+//          dialogBuilt.dismiss();
         }
       });
 //      FragmentManager manager = getFragmentManager();
@@ -303,51 +303,51 @@ public class GroceryListFragment extends Fragment {
     }
   }
 
-  private class IngredientsAndRecipes extends AsyncTask<String, Void, List<IngredientsMapRecipeItems>> {
+//  private class IngredientsAndRecipes extends AsyncTask<String, Void, List<IngredientsMapRecipeItems>> {
+//
+//    @Override
+//    protected List<IngredientsMapRecipeItems> doInBackground(String... strings) {
+//      return Reciplee.getInstance(getContext()).getIngredientDao().selectIngredientsAndItems(strings[0]);
+//    }
+//
+//    @Override
+//    protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
+//      // TODO insert shopping list then repopulate
+//
+//
+//    }
+//  }
 
-    @Override
-    protected List<IngredientsMapRecipeItems> doInBackground(String... strings) {
-      return Reciplee.getInstance(getContext()).getIngredientDao().selectIngredientsAndItems(strings[0]);
-    }
+//  private class ShoppingListPopulate extends AsyncTask<Void, Void, List<ShoppingItem>> {
+//
+//    @Override
+//    protected List<ShoppingItem> doInBackground(Void... voids) {
+//      return Reciplee.getInstance(getContext()).getShoppingItemDao().select();
+//    }
+//
+//    @Override
+//    protected void onPostExecute(List<ShoppingItem> shoppingItems) {
+//      // TODO decide if this is needed after above and below, perhaps just an insert from Ingredients and Recipes
+////      for (ShoppingItem item : shoppingItems) {
+////        if (shoppingList.containsKey(item.ge())) {
+////          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
+////        } else {
+////          List<String> recipeItems = new ArrayList<>();
+////          recipeItems.add(item.getRecipe_item());
+////          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
+////        }
+////      }
+//    }
+//  }
 
-    @Override
-    protected void onPostExecute(List<IngredientsMapRecipeItems> ingredientsMapRecipeItems) {
-      // TODO insert shopping list then repopulate
-
-
-    }
-  }
-
-  private class ShoppingListPopulate extends AsyncTask<Void, Void, List<ShoppingItem>> {
-
-    @Override
-    protected List<ShoppingItem> doInBackground(Void... voids) {
-      return Reciplee.getInstance(getContext()).getShoppingItemDao().select();
-    }
-
-    @Override
-    protected void onPostExecute(List<ShoppingItem> shoppingItems) {
-      // TODO decide if this is needed after above and below, perhaps just an insert from Ingredients and Recipes
-//      for (ShoppingItem item : shoppingItems) {
-//        if (shoppingList.containsKey(item.ge())) {
-//          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
-//        } else {
-//          List<String> recipeItems = new ArrayList<>();
-//          recipeItems.add(item.getRecipe_item());
-//          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
-//        }
-//      }
-    }
-  }
-
-  private class ConstructShoppingList extends AsyncTask<List<ShoppingItem>, Void, List<ShoppingListAssembled>> {
-
-    @Override
-    protected List<ShoppingListAssembled> doInBackground(List<ShoppingItem>... lists) {
-      // TODO Assemble shopping list Map<String ingredient, List<String> items>
-      return null;
-    }
-  }
+//  private class ConstructShoppingList extends AsyncTask<List<ShoppingItem>, Void, List<ShoppingListAssembled>> {
+//
+//    @Override
+//    protected List<ShoppingListAssembled> doInBackground(List<ShoppingItem>... lists) {
+//      // TODO Assemble shopping list Map<String ingredient, List<String> items>
+//      return null;
+//    }
+//  }
 
   private class IngredientInsert extends AsyncTask<Ingredient, Void, Long> {
 
