@@ -255,13 +255,15 @@ public class GroceryListFragment extends Fragment {
 
     @Override
     protected void onPostExecute(List<String> strings) {
+      // TODO add ingredients to recipe dialog
       recipeDirections = strings.get(0);
-      recipeDirections = recipeDirections.replace("& ", "\n\n - ");
+      recipeDirections = "Directions:\n" + recipeDirections.replace("& ", "\n- ");
       AlertDialog.Builder dialog = new Builder(getContext());
       View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
       TextView title = (TextView) dialogView.findViewById(R.id.recipe_title);
       TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
-      recipeTitle = recipeTitle + "\n\nDirections";
+      // TODO set onclick listeners for buttons (to add recipe or go back)
+      recipeTitle = recipeTitle + "Directions";
       title.setText(recipeTitle);
       directions.setText(recipeDirections);
       dialog.setView(dialogView);
