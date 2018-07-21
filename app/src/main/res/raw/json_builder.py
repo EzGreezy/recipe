@@ -125,6 +125,8 @@ try:
         has = True
         if text == "==title==":
             title = next(recipesFile).strip()
+            if title == "Pickled Cucumber":
+              print title
             while text != "==ingredients==":
                 text = next(recipesFile).strip()
             while len(text) == 0:
@@ -135,7 +137,7 @@ try:
                     text = next(recipesFile).strip()
             while len(text) < 3:
                 text = next(recipesFile).strip()
-            while text != "==directions==":
+            while text[0] == "*" or text[0:3] == "===":
                 # TODO get sub ingredients later
                 if text[0:3] == "===":
                     text = next(recipesFile).strip()
@@ -166,7 +168,7 @@ try:
             if has:
                 for i in recipeItemBuilderTemp:
                     recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,
-                                              "description": '<li>' + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</li>"})
+                                              "description": "* " + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>')})
                     for j in i[1]:
                         itemIngredientMapBuilder.append({"recipe_item_id": recipeItemId, "ingredient_id": j["ingredient_id"]})
                     recipeItemId += 1

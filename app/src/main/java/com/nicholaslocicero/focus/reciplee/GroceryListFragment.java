@@ -7,10 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,10 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 
 /**
@@ -50,22 +46,18 @@ public class GroceryListFragment extends Fragment {
 
   private static final int REQUEST_RECIPE = 0;
 
-  private RecyclerView mIngredientRecyclerView;
-  private List<Ingredient> mIngredientsList = new ArrayList<>();
-  private ListAdapter mIngredientListAdapter;
   private AutoCompleteAdapter recipeTitlesAdapter;
   private List<String> recipeTitles = new ArrayList<>();
-  private EditText mRecipeText;
-  private Button mIngredientButton;
-  private EditText mIngredientText;
-  private Random rng = new Random();
-  private boolean startup = true;
+  private Button addIngredientButton;
+  private EditText addIngredientText;
   private String recipeTitle = "";
   private String recipeDirections = "";
   private Map<String,List<String>> shoppingListMap = new HashMap<>();
-  List<String> shoppingListIngredients = new ArrayList<>();
-  ExpandableListView shoppingListExpandable;
-  ShoppingListAdapter adapter;
+  private List<String> shoppingListIngredients = new ArrayList<>();
+  private ExpandableListView shoppingListExpandable;
+  private ShoppingListAdapter adapter;
+  private String addIngredientDirectText = "";
+  private String addIngredientDirectAmount = "";
 
   public GroceryListFragment() {
 
@@ -74,20 +66,16 @@ public class GroceryListFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    // FIXME On the first installation, when it starts up on emulator, the autocomplete text doesn't work. You have to completely close the app and restart it.
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     new RecipesQuery().execute();
     shoppingListExpandable = (ExpandableListView) view.findViewById(R.id.shopping_expandable_list_view);
-
-    // possible issue here, check how we did it with recipeTitlesAdapter.addAll(___) in AsyncTask
     adapter = new ShoppingListAdapter(getContext(), shoppingListMap, shoppingListIngredients);
     shoppingListExpandable.setAdapter(adapter);
     refreshShoppingList();
-
-    recipeTitlesAdapter = new AutoCompleteAdapter(getContext(),
-        android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
+    recipeTitlesAdapter = new AutoCompleteAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, R.id.add_recipe_text_array);
     final AutoCompleteTextView addRecipeSuggestions = (AutoCompleteTextView) view.findViewById(R.id.add_recipe_text);
     addRecipeSuggestions.setAdapter(recipeTitlesAdapter);
-
 
     addRecipeSuggestions.setOnItemClickListener(new OnItemClickListener() {
       @Override
@@ -95,6 +83,41 @@ public class GroceryListFragment extends Fragment {
         recipeTitle = ((TextView) view).getText().toString();
         new RecipeDirections().execute(recipeTitle);
         addRecipeSuggestions.requestFocus();
+      }
+    });
+
+    addIngredientText = view.findViewById(R.id.add_ingredient_text);
+    addIngredientButton = view.findViewById(R.id.add_ingredient_button);
+
+    addIngredientButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        AlertDialog.Builder dialog = new Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.add_ingredient_dialog, null);
+        final EditText ingredientEditText = (EditText) dialogView.findViewById(R.id.dialog_add_ingredient_item);
+        addIngredientDirectText = (String) addIngredientText.getText().toString();
+        ingredientEditText.setHint("How much " + addIngredientDirectText + "?");
+        Button add = (Button) dialogView.findViewById(R.id.dialog_add_ingredient_add_button);
+        Button back = (Button) dialogView.findViewById(R.id.dialog_add_ingredient_cancel_button);
+        dialog.setView(dialogView);
+        final AlertDialog dialogBuilt = dialog.create();
+        dialogBuilt.show();
+        back.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            dialogBuilt.dismiss();
+          }
+        });
+        add.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            new AddIngredientToShoppingList().execute(addIngredientDirectText);
+            addIngredientText.getText().clear();
+            addIngredientDirectAmount = ingredientEditText.getText().toString();
+            ingredientEditText.getText().clear();
+            dialogBuilt.dismiss();
+          }
+        });
       }
     });
 
@@ -259,8 +282,6 @@ public class GroceryListFragment extends Fragment {
       }
       Collections.sort(shoppingListIngredients);
       adapter.notifyDataSetChanged();
-      Log.e("keys", shoppingListIngredients.toString());
-//      adapter.notifyDataSetChanged();
     }
   }
 
@@ -298,7 +319,6 @@ public class GroceryListFragment extends Fragment {
       TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
       Button add = (Button) dialogView.findViewById(R.id.add);
       Button back = (Button) dialogView.findViewById(R.id.back);
-      // TODO set onclick listeners for buttons (to add recipe or go back)
       title.setText(recipeTitle);
       directions.setText(Html.fromHtml(recipeDirections), BufferType.SPANNABLE);
       dialog.setView(dialogView);
@@ -317,10 +337,6 @@ public class GroceryListFragment extends Fragment {
           dialogBuilt.dismiss();
         }
       });
-//      FragmentManager manager = getFragmentManager();
-//      RecipePickerFragment dialog = RecipePickerFragment.newInstance(recipeTitle.substring(2) + " Directions", recipeDirections);
-//      dialog.setTargetFragment(GroceryListFragment.this, REQUEST_RECIPE);
-//      dialog.show(manager, DIALOG_RECIPE);
     }
   }
 
@@ -335,11 +351,11 @@ public class GroceryListFragment extends Fragment {
     protected void onPostExecute(List<Recipe> recipes) {
       ShoppingItem shoppingItem = new ShoppingItem();
       shoppingItem.setRecipe_id(recipes.get(0).getId());
-      new InsertShoppingRecipe().execute(shoppingItem);
+      new InsertShoppingItem().execute(shoppingItem);
     }
   }
 
-  private class InsertShoppingRecipe extends AsyncTask<ShoppingItem, Void, Long> {
+  private class InsertShoppingItem extends AsyncTask<ShoppingItem, Void, Long> {
 
     @Override
     protected Long doInBackground(ShoppingItem... shoppingItems) {
@@ -352,37 +368,6 @@ public class GroceryListFragment extends Fragment {
     }
   }
 
-//  private class ShoppingListPopulate extends AsyncTask<Void, Void, List<ShoppingItem>> {
-//
-//    @Override
-//    protected List<ShoppingItem> doInBackground(Void... voids) {
-//      return Reciplee.getInstance(getContext()).getShoppingItemDao().select();
-//    }
-//
-//    @Override
-//    protected void onPostExecute(List<ShoppingItem> shoppingItems) {
-//      // TODO decide if this is needed after above and below, perhaps just an insert from Ingredients and Recipes
-////      for (ShoppingItem item : shoppingItems) {
-////        if (shoppingListMap.containsKey(item.ge())) {
-////          recipeIngredientsAndItems.get(item.getIngredient()).add(item.getRecipe_item());
-////        } else {
-////          List<String> recipeItems = new ArrayList<>();
-////          recipeItems.add(item.getRecipe_item());
-////          recipeIngredientsAndItems.put(item.getIngredient(), recipeItems);
-////        }
-////      }
-//    }
-//  }
-
-//  private class ConstructShoppingList extends AsyncTask<List<ShoppingItem>, Void, List<ShoppingListAssembled>> {
-//
-//    @Override
-//    protected List<ShoppingListAssembled> doInBackground(List<ShoppingItem>... lists) {
-//      // TODO Assemble shopping list Map<String ingredient, List<String> items>
-//      return null;
-//    }
-//  }
-
   private class IngredientInsert extends AsyncTask<Ingredient, Void, Long> {
 
     @Override
@@ -393,6 +378,44 @@ public class GroceryListFragment extends Fragment {
     @Override
     protected void onPostExecute(Long aLong) {
       refreshShoppingList();
+    }
+  }
+
+  private class AddIngredientToShoppingList extends AsyncTask<String, Void, Long> {
+
+    @Override
+    protected Long doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getIngredientDao().getIngredientIdByName(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Long id) {
+      if (id == null) {
+        new InsertDirectIngredientIntoIngredients().execute(addIngredientDirectText);
+      } else {
+        ShoppingItem shoppingItem = new ShoppingItem();
+        shoppingItem.setIngredient_id(id);
+        shoppingItem.setIngredient_item(addIngredientDirectAmount);
+        new InsertShoppingItem().execute(shoppingItem);
+      }
+    }
+  }
+
+  private class InsertDirectIngredientIntoIngredients extends AsyncTask<String, Void, Long> {
+
+    @Override
+    protected Long doInBackground(String... strings) {
+      Ingredient ingredient = new Ingredient();
+      ingredient.setName(addIngredientDirectText);
+      return Reciplee.getInstance(getContext()).getIngredientDao().insert(ingredient);
+    }
+
+    @Override
+    protected void onPostExecute(Long id) {
+      ShoppingItem shoppingItem = new ShoppingItem();
+      shoppingItem.setIngredient_id(id);
+      shoppingItem.setIngredient_item(addIngredientDirectAmount);
+      new InsertShoppingItem().execute(shoppingItem);
     }
   }
 }

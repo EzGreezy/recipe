@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface IngredientDao {
 
-  @Insert
+  @Insert()
   long insert(Ingredient ingredient);
 
   @Insert
@@ -21,6 +21,12 @@ public interface IngredientDao {
 
   @Query("SELECT * FROM ingredients")
   List<Ingredient> select();
+
+  @Query("SELECT id FROM ingredients WHERE name LIKE :text")
+  Long getIngredientIdByName(String text);
+
+//  @Query("SELECT CASE WHEN EXISTS (SELECT * FROM ingredients WHERE ingredients.name = :text) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END")
+//  Boolean isIngredient(String text);
 
 //  @Query(Queries.INGREDIENTS_FROM_RECIPES_LOOK_UP)
 //  List<IngredientsMapRecipeItems> selectIngredientsAndItems(String title);
