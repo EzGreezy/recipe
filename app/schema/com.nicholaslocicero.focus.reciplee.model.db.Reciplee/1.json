@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ed07cf2fb19e3e4759558a2a45c97dd7",
+    "identityHash": "c281a6d850742d494a9ee6491df8307c",
     "entities": [
       {
         "tableName": "categories",
@@ -301,7 +301,7 @@
       },
       {
         "tableName": "shopping_list",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ingredient_id` INTEGER, `ingredient_item` TEXT, `recipe_id` INTEGER, FOREIGN KEY(`ingredient_id`) REFERENCES `ingredients`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`recipe_id`) REFERENCES `recipes`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ingredient_id` INTEGER, `ingredient_item` TEXT, `recipe_id` INTEGER, `remove_string` TEXT, FOREIGN KEY(`ingredient_id`) REFERENCES `ingredients`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`recipe_id`) REFERENCES `recipes`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -325,6 +325,12 @@
             "fieldPath": "recipe_id",
             "columnName": "recipe_id",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "remove_string",
+            "columnName": "remove_string",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -398,7 +404,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ed07cf2fb19e3e4759558a2a45c97dd7\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c281a6d850742d494a9ee6491df8307c\")"
     ]
   }
 }

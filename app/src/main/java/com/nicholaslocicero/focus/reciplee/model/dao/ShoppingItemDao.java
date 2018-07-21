@@ -1,6 +1,7 @@
 package com.nicholaslocicero.focus.reciplee.model.dao;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
@@ -28,4 +29,13 @@ public interface ShoppingItemDao {
 
   @Query(Queries.SHOPPING_LIST_ASSEMBLY)
   List<ShoppingListAssembled> assembleShoppingList();
+
+  @Query("Select ingredient_item FROM shopping_list WHERE ingredient_item = :text")
+  String selectForIngredientItem(String text);
+
+  @Query("Select * FROM shopping_list WHERE shopping_list.ingredient_item = :text")
+  ShoppingItem queryIngredientItemForDeletion(String text);
+
+  @Delete
+  void delete(ShoppingItem shoppingItem);
 }

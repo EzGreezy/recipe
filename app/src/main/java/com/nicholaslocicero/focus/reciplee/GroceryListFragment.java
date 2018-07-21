@@ -21,12 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
@@ -61,6 +59,7 @@ public class GroceryListFragment extends Fragment {
   private ShoppingListAdapter adapter;
   private String addIngredientDirectText = "";
   private String addIngredientDirectAmount = "";
+  private String deleteShoppingItemText = "";
 
   public GroceryListFragment() {
 
@@ -127,27 +126,29 @@ public class GroceryListFragment extends Fragment {
     shoppingListExpandable.setOnChildClickListener(new OnChildClickListener() {
       @Override
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-          int childPosition, long id) {
-            AlertDialog.Builder builder = new Builder(getContext());
-            View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
-            Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
-            Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
-            builder.setView(dialogView);
-            final AlertDialog dialog = builder.create();
-            dialog.show();
-            back.setOnClickListener(new OnClickListener() {
+        int childPosition, long id) {
+          AlertDialog.Builder builder = new Builder(getContext());
+          View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
+          Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
+          Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+          builder.setView(dialogView);
+          final AlertDialog dialog = builder.create();
+          dialog.show();
+          back.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          dialog.dismiss();
+        }
+      });
+        deleteShoppingItemText = ((TextView) v.findViewById(R.id.child_txt)).getText().toString();
+        delete.setOnClickListener(new OnClickListener() {
           @Override
           public void onClick(View v) {
+            new RemoveShoppingItem().execute(deleteShoppingItemText);
             dialog.dismiss();
           }
         });
-            delete.setOnClickListener(new OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                Toast.makeText(getContext(), "Delete button working", Toast.LENGTH_LONG).show();
-              }
-            });
-            return false;
+        return false;
       }
     });
     return view;
@@ -447,4 +448,50 @@ public class GroceryListFragment extends Fragment {
       new InsertShoppingItem().execute(shoppingItem);
     }
   }
+
+  private class RemoveShoppingItem extends AsyncTask<String, Void, String> {
+
+    @Override
+    protected String doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().selectForIngredientItem(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+      if (s == null) {
+        // add to shopping list row
+        return;
+      } else {
+        new GetShoppingItemForDeletion().execute(s);
+      }
+    }
+  }
+
+  private class GetShoppingItemForDeletion extends AsyncTask<String, Void, ShoppingItem> {
+
+    @Override
+    protected ShoppingItem doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().queryIngredientItemForDeletion(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(ShoppingItem shoppingItem) {
+      new DeleteShoppingItemObject().execute(shoppingItem);
+    }
+  }
+
+  private class DeleteShoppingItemObject extends AsyncTask<ShoppingItem, Void, Void> {
+
+    @Override
+    protected Void doInBackground(ShoppingItem... shoppingItems) {
+      Reciplee.getInstance(getContext()).getShoppingItemDao().delete(shoppingItems[0]);
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+      refreshShoppingList();
+    }
+  }
 }
+

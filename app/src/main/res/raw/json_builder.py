@@ -165,6 +165,7 @@ try:
                     while len(text) < 3:
                         text = next(recipesFile).strip()
                     itemIngredientMapBuilderTemp = []
+            # FIXME don't add recipes that don't have at least 1 '#' in the directions part of the parsing
             if has:
                 for i in recipeItemBuilderTemp:
                     recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,

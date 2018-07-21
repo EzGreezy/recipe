@@ -34,6 +34,8 @@ public class ShoppingItem {
   private String ingredient_item;
   @ColumnInfo(name = "recipe_id", index = true)
   private Long recipe_id;
+  @ColumnInfo(name = "remove_string")
+  private String remove_string;
 
   public long getId() {
     return id;
@@ -65,5 +67,13 @@ public class ShoppingItem {
 
   public void setRecipe_id(Long recipe_id) {
     this.recipe_id = recipe_id;
+  }
+
+  public String getRemove_string() {
+    return remove_string;
+  }
+
+  public void setRemove_string(String remove_string) {
+    this.remove_string = remove_string;
   }
 }
