@@ -5,9 +5,12 @@ import android.graphics.Typeface;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +78,7 @@ public class ShoppingListAdapter extends BaseExpandableListAdapter {
 
   @Override
   public View getChildView(int parent, int child, boolean lastChild,
-      View convertView, ViewGroup parentView) {
+      View convertView, final ViewGroup parentView) {
     String childTitle = (String) getChild(parent, child);
     if (convertView == null) {
       LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

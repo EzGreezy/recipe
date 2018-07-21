@@ -39,8 +39,8 @@
       android:layout_marginHorizontal="24dp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:background="@color/colorAccent"
-      android:textColor="@android:color/white"
+      android:background="@drawable/back_button_bg"
+      android:textColor="@color/colorAccent"
       android:text="Back"/>
 
     <Button

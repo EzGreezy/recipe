@@ -20,10 +20,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
@@ -121,6 +124,32 @@ public class GroceryListFragment extends Fragment {
       }
     });
 
+    shoppingListExpandable.setOnChildClickListener(new OnChildClickListener() {
+      @Override
+      public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+          int childPosition, long id) {
+            AlertDialog.Builder builder = new Builder(getContext());
+            View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
+            Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
+            Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+            builder.setView(dialogView);
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            back.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            dialog.dismiss();
+          }
+        });
+            delete.setOnClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                Toast.makeText(getContext(), "Delete button working", Toast.LENGTH_LONG).show();
+              }
+            });
+            return false;
+      }
+    });
     return view;
   }
 
@@ -397,7 +426,7 @@ public class GroceryListFragment extends Fragment {
       } else {
         ShoppingItem shoppingItem = new ShoppingItem();
         shoppingItem.setIngredient_id(id);
-        shoppingItem.setIngredient_item(addIngredientDirectAmount);
+        shoppingItem.setIngredient_item("* " + addIngredientDirectAmount);
         new InsertShoppingItem().execute(shoppingItem);
       }
     }
@@ -414,7 +443,7 @@ public class GroceryListFragment extends Fragment {
     protected void onPostExecute(Long id) {
       ShoppingItem shoppingItem = new ShoppingItem();
       shoppingItem.setIngredient_id(id);
-      shoppingItem.setIngredient_item(addIngredientDirectAmount);
+      shoppingItem.setIngredient_item("* " + addIngredientDirectAmount);
       new InsertShoppingItem().execute(shoppingItem);
     }
   }
