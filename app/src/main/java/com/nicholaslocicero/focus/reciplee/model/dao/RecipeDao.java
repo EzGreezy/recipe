@@ -22,6 +22,9 @@ public interface RecipeDao {
   @Query("SELECT title FROM recipes")
   List<String> selectRecipeTitles();
 
+  @Query("SELECT MAX(id) FROM recipes")
+  Long selectMax();
+
   @Query("SELECT * FROM recipes WHERE recipes.title = :title")
   List<Recipe> selectRecipeByTitle(String title);
 

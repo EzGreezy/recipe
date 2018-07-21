@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class Ingredient {
 
   @ColumnInfo(name="id")
-  @PrimaryKey
+  @PrimaryKey(autoGenerate = true)
   private long id;
   private String name;
 

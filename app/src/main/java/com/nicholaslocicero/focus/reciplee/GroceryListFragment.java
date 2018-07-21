@@ -391,7 +391,9 @@ public class GroceryListFragment extends Fragment {
     @Override
     protected void onPostExecute(Long id) {
       if (id == null) {
-        new InsertDirectIngredientIntoIngredients().execute(addIngredientDirectText);
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName(addIngredientDirectText);
+        new InsertNewIngredient().execute(ingredient);
       } else {
         ShoppingItem shoppingItem = new ShoppingItem();
         shoppingItem.setIngredient_id(id);
@@ -401,13 +403,11 @@ public class GroceryListFragment extends Fragment {
     }
   }
 
-  private class InsertDirectIngredientIntoIngredients extends AsyncTask<String, Void, Long> {
+  private class InsertNewIngredient extends AsyncTask<Ingredient, Void, Long> {
 
     @Override
-    protected Long doInBackground(String... strings) {
-      Ingredient ingredient = new Ingredient();
-      ingredient.setName(addIngredientDirectText);
-      return Reciplee.getInstance(getContext()).getIngredientDao().insert(ingredient);
+    protected Long doInBackground(Ingredient... ingredients) {
+      return Reciplee.getInstance(getContext()).getIngredientDao().insert(ingredients[0]);
     }
 
     @Override

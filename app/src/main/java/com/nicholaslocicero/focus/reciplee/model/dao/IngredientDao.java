@@ -19,6 +19,9 @@ public interface IngredientDao {
   @Insert
   List<Long> insert(List<Ingredient> ingredients);
 
+  @Query("SELECT MAX(id) FROM ingredients")
+  Long selectMax();
+
   @Query("SELECT * FROM ingredients")
   List<Ingredient> select();
 

@@ -1,6 +1,7 @@
 package com.nicholaslocicero.focus.reciplee.model.db;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.db.SupportSQLiteStatement;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
@@ -95,7 +96,15 @@ public abstract class Reciplee extends RoomDatabase {
 //      Recipe recipe = new Recipe();
 
       try {
-        JsonReader reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.recipe)));
+
+        JsonReader reader;
+
+        reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.ingredient)));
+        Ingredient[] ingredients = new Gson().fromJson(reader, Ingredient[].class);
+        db.getIngredientDao().insert(ingredients);
+        reader.close();
+
+        reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.recipe)));
         Recipe[] recipes = new Gson().fromJson(reader, Recipe[].class);
         db.getRecipeDao().insert(recipes);
         reader.close();
@@ -103,11 +112,6 @@ public abstract class Reciplee extends RoomDatabase {
         reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.recipe_ingredient)));
         RecipeItem[] recipeItems = new Gson().fromJson(reader, RecipeItem[].class);
         db.getRecipeItemDao().insert(recipeItems);
-        reader.close();
-
-        reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.ingredient)));
-        Ingredient[] ingredients = new Gson().fromJson(reader, Ingredient[].class);
-        db.getIngredientDao().insert(ingredients);
         reader.close();
 
         reader = new JsonReader(new InputStreamReader(contexts[0].getResources().openRawResource(R.raw.ingredient_map)));
