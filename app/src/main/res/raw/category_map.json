@@ -1017,10 +1017,6 @@
   }, 
   {
     "category_id": 345, 
-    "recipe_id": 696
-  }, 
-  {
-    "category_id": 345, 
     "recipe_id": 697
   }, 
   {
@@ -1236,18 +1232,6 @@
     "recipe_id": 827
   }, 
   {
-    "category_id": 948, 
-    "recipe_id": 832
-  }, 
-  {
-    "category_id": 642, 
-    "recipe_id": 834
-  }, 
-  {
-    "category_id": 642, 
-    "recipe_id": 835
-  }, 
-  {
     "category_id": 236, 
     "recipe_id": 841
   }, 
@@ -1270,10 +1254,6 @@
   {
     "category_id": 451, 
     "recipe_id": 847
-  }, 
-  {
-    "category_id": 642, 
-    "recipe_id": 849
   }, 
   {
     "category_id": 55, 

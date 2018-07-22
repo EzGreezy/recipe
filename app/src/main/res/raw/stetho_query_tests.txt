@@ -19,3 +19,6 @@ FROM
   )
     ON shopping_list.ingredient_id = ingredients.id
       OR recipes.id = ri2.recipe_id
+
+
+SELECT * FROM categories LEFT JOIN (SELECT category_id, COUNT(category_id) AS occurs FROM categories_map GROUP BY category_id ORDER BY occurs DESC) AS categorymap ON categories.id = categorymap.category_id ORDER BY categorymap.occurs DESC

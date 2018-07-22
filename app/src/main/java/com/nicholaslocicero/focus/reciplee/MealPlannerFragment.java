@@ -4,17 +4,22 @@ package com.nicholaslocicero.focus.reciplee;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog.Builder;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
+import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +49,32 @@ public class MealPlannerFragment extends Fragment {
     mealPlannerRecyclerView.setAdapter(mealAdapter);
     updateUI();
 
+    mealPlannerRecyclerView.setOnItemClickListener(new OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+        AlertDialog.Builder builder = new Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
+        Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
+        Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        back.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            dialog.dismiss();
+          }
+        });
+        delete.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            new RemoveRecipeByTitle().execute(meals.get(position).getTitle());
+            dialog.dismiss();
+          }
+        });
+      }
+    });
+
     return view;
   }
 
@@ -58,24 +89,24 @@ public class MealPlannerFragment extends Fragment {
   }
 
 
-  private class MealHolder extends RecyclerView.ViewHolder {
-    private Recipe recipe;
-    private TextView mealTitle;
-    private TextView mealDirections;
-
-    public MealHolder(LayoutInflater inflater, ViewGroup parent) {
-      super(inflater.inflate(R.layout.meal_planner_item, parent, false));
-
-      mealTitle = (TextView) itemView.findViewById(R.id.meal_title);
-      mealDirections = (TextView) itemView.findViewById(R.id.meal_directions);
-    }
-
-    public void bind(Recipe recipe) {
-      this.recipe = recipe;
-      mealTitle.setText(this.recipe.getTitle());
-      mealDirections.setText(this.recipe.getDirections());
-    }
-  }
+//  private class MealHolder extends RecyclerView.ViewHolder {
+//    private Recipe recipe;
+//    private TextView mealTitle;
+//    private TextView mealDirections;
+//
+//    public MealHolder(LayoutInflater inflater, ViewGroup parent) {
+//      super(inflater.inflate(R.layout.meal_planner_item, parent, false));
+//
+//      mealTitle = (TextView) itemView.findViewById(R.id.meal_title);
+//      mealDirections = (TextView) itemView.findViewById(R.id.meal_directions);
+//    }
+//
+//    public void bind(Recipe recipe) {
+//      this.recipe = recipe;
+//      mealTitle.setText(this.recipe.getTitle());
+//      mealDirections.setText(this.recipe.getDirections());
+//    }
+//  }
 
   private class MealAdapter extends BaseAdapter {
 
@@ -105,6 +136,7 @@ public class MealPlannerFragment extends Fragment {
 
       return convertView;
     }
+
   }
 
   private class UpdateRecipes extends AsyncTask<Void, Void, List<Recipe>> {
@@ -119,6 +151,47 @@ public class MealPlannerFragment extends Fragment {
       meals.clear();
       meals.addAll(recipes);
       mealAdapter.notifyDataSetChanged();
+    }
+  }
+
+  private class RemoveRecipeByTitle extends AsyncTask<String, Void, Recipe> {
+
+    @Override
+    protected Recipe doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getRecipeDao().getRecipeByTitle(strings[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Recipe recipe) {
+      Long id = recipe.getId();
+      new GetShoppingItemToDelete().execute(id);
+    }
+  }
+
+  private class GetShoppingItemToDelete extends AsyncTask<Long, Void, ShoppingItem> {
+
+    @Override
+    protected ShoppingItem doInBackground(Long... longs) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().selectById(longs[0]);
+    }
+
+    @Override
+    protected void onPostExecute(ShoppingItem shoppingItem) {
+      new DeleteRecipeFromShoppingItems().execute(shoppingItem);
+    }
+  }
+
+  private class DeleteRecipeFromShoppingItems extends AsyncTask<ShoppingItem, Void, Void> {
+
+    @Override
+    protected Void doInBackground(ShoppingItem... shoppingItems) {
+      Reciplee.getInstance(getContext()).getShoppingItemDao().delete(shoppingItems[0]);
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+      updateUI();
     }
   }
 

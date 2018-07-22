@@ -200,22 +200,24 @@ try:
                             text = next(recipesFile).strip()
                         if text[0] == "=":
                             break
-                while text != "==end==":
-                    if re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
-                        cats = re.findall(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text)
-                        for cat in cats:
-                            c = cat.lower().replace('[[category:', '').replace(' recipes]]', '')
-                            if c in categoriesIds:
-                                categoryMapBuilder.append({"recipe_id": recipeId, "category_id": categoriesIds[c]})
-                    text = next(recipesFile).strip()
                 if hasDirections:
+                    while text != "==end==":
+                        if re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
+                            cats = re.findall(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text)
+                            for cat in cats:
+                                c = cat.lower().replace('[[category:', '').replace(' recipes]]', '')
+                                if c in categoriesIds:
+                                    categoryMapBuilder.append({"recipe_id": recipeId, "category_id": categoriesIds[c]})
+                        text = next(recipesFile).strip()
                     recipeBuilder.append({"id": recipeId,
                                               "title": title,
                                               "directions": directions.replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</ol></p>"})
                 else:
+                    while text != "==end==":
+                        text = next(recipesFile).strip()
                     recipeBuilder.append({"id": recipeId,
-                                          "title": "",
-                                          "directions": ""})
+                                              "title": "",
+                                              "directions": ""})
 
                 recipeId += 1
 except(StopIteration):

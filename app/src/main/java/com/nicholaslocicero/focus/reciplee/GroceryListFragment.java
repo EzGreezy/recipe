@@ -129,19 +129,19 @@ public class GroceryListFragment extends Fragment {
       @Override
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
         int childPosition, long id) {
-          AlertDialog.Builder builder = new Builder(getContext());
-          View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
-          Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
-          Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
-          builder.setView(dialogView);
-          final AlertDialog dialog = builder.create();
-          dialog.show();
-          back.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          dialog.dismiss();
-        }
-      });
+        AlertDialog.Builder builder = new Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
+        Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
+        Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        back.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        dialog.dismiss();
+      }
+    });
         deleteShoppingItemText = ((TextView) v.findViewById(R.id.child_txt)).getText().toString();
         delete.setOnClickListener(new OnClickListener() {
           @Override

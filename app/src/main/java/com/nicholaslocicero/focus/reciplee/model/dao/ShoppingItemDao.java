@@ -40,6 +40,12 @@ public interface ShoppingItemDao {
   @Query("Select * FROM shopping_list WHERE shopping_list.ingredient_item = :text")
   ShoppingItem queryIngredientItemForDeletion(String text);
 
+  @Query("Select * FROM shopping_list WHERE shopping_list.recipe_id = :id")
+  ShoppingItem selectById(Long id);
+
+//  @Query("Select * FROM shopping_list WHERE shopping_list.recipe_id = :text")
+//  ShoppingItem queryIngredientItemForDeletion(String text);
+
   @Delete
   void delete(ShoppingItem shoppingItem);
 }
