@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
 
   Toolbar toolbar;
   String[] funNavHeaderIcons = {"\uD83E\uDD57", "\uD83C\uDF71", "🍜", "🍿", "🥫", "🍚", "🍛", "🍜", "🍝",
-                                "🍠", "🍣", "🍤", "🍥", "🍦", "🥧", "☕"};
+                                "🍠", "🍣", "🍤", "🍥", "🍦", "🥧", "☕", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯"};
 
   Random rng = new Random();
 
