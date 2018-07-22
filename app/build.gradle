@@ -34,6 +34,7 @@ dependencies {
     compile "android.arch.persistence.room:runtime:1.1.1"
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.2', {

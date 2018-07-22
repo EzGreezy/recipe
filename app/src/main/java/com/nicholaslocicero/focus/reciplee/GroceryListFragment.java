@@ -71,6 +71,7 @@ public class GroceryListFragment extends Fragment {
       Bundle savedInstanceState) {
     // FIXME On the first installation, when it starts up on emulator, the autocomplete text doesn't work. You have to completely close the app and restart it.
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
+    getActivity().setTitle("Shopping List");
     new RecipesQuery().execute();
     shoppingListExpandable = (ExpandableListView) view.findViewById(R.id.shopping_expandable_list_view);
     adapter = new ShoppingListAdapter(getContext(), shoppingListMap, shoppingListIngredients);
@@ -233,49 +234,6 @@ public class GroceryListFragment extends Fragment {
     };
   }
 
-  private class ListHolder extends RecyclerView.ViewHolder {
-    private Ingredient mIngredient;
-    private TextView mIngredientTextView;
-    private TextView mAmountTextView;
-
-    public ListHolder(LayoutInflater inflater, ViewGroup parent) {
-      super(inflater.inflate(R.layout.list_item_ingredient, parent, false));
-
-      mIngredientTextView = (TextView) itemView.findViewById(R.id.name);
-      mAmountTextView = (TextView) itemView.findViewById(R.id.quantity);
-    }
-
-    public void bind(Ingredient ingredient) {
-      mIngredient = ingredient;
-      mIngredientTextView.setText(mIngredient.getName());
-    }
-  }
-
-  private class ListAdapter extends RecyclerView.Adapter<ListHolder> {
-    private List<Ingredient> mIngredients;
-
-    public ListAdapter(List<Ingredient> ingredients) {
-      mIngredients = ingredients;
-    }
-
-    @Override
-    public ListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-      LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-
-      return new ListHolder(layoutInflater, viewGroup);
-    }
-
-    @Override
-    public void onBindViewHolder(ListHolder listHolder, int i) {
-      Ingredient ingredient = mIngredients.get(i);
-      listHolder.bind(ingredient);
-    }
-
-    @Override
-    public int getItemCount() {
-      return mIngredients.size();
-    }
-  }
 
   private void refreshShoppingList() {
     new ShoppingItemQuery().execute();

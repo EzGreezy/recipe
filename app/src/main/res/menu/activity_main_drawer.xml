@@ -5,17 +5,17 @@
 
   <group android:checkableBehavior="single">
     <item
-      android:id="@+id/shopping_list"
+      android:id="@+id/nav_shopping_list"
       android:icon="@drawable/ic_menu_list1"
       android:title="Shopping List"/>
     <item
-      android:id="@+id/calendar"
-      android:icon="@drawable/ic_menu_gallery"
-      android:title="Calendar"/>
-    <item
-      android:id="@+id/search_recipes"
-      android:icon="@drawable/ic_menu_slideshow"
-      android:title="Search Recipes"/>
+      android:id="@+id/nav_meal_planner"
+      android:icon="@drawable/ic_meal_planner"
+      android:title="Meal Planner"/>
+    <!--<item-->
+      <!--android:id="@+id/search_recipes"-->
+      <!--android:icon="@drawable/ic_menu_slideshow"-->
+      <!--android:title="Search Recipes"/>-->
   </group>
 
   <!--<item android:title="Communicate">-->
