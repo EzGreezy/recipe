@@ -334,8 +334,8 @@ public class GroceryListFragment extends Fragment {
           TextView titleCalenderView = (TextView) dialogCalendarView.findViewById(R.id.recipe_title_to_schedule);
           Button schedule = (Button) dialogCalendarView.findViewById(R.id.add_to_calendar);
           Button dont_schedule = dialogCalendarView.findViewById(R.id.dont_add_to_calendar);
-          String calendarTitleText = "Would you like to schedule " + recipeTitle + " in your calendar?";
-          titleCalenderView.setText(calendarTitleText);
+          String calendarTitleText = "<font color=\"#FF4081\">" + recipeTitle + "</font>: add to calendar?";
+          titleCalenderView.setText(Html.fromHtml(calendarTitleText));
           dialogCalenderBuilder.setView(dialogCalendarView);
           final AlertDialog dialogCalendarBuilt = dialogCalenderBuilder.create();
           dialogCalendarBuilt.show();

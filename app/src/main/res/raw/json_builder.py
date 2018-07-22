@@ -186,6 +186,7 @@ try:
                         break
                 while len(text) < 3:
                     text = next(recipesFile).strip()
+                recipeNumber = 1
                 while text[0] == "#" or text[0:3] == "===":
                     # TODO get sub directions later
                     if text[0:3] == "===":
@@ -194,12 +195,17 @@ try:
                             text = next(recipesFile).strip()
                     else:
                         hasDirections = True
-                        directions = directions + '<li>' + text[2:] + '</li>'
+                        if recipeNumber == 1:
+                            directions = "<p>" + text[2:] + "</p>"
+                        elif recipeNumber == 2:
+                            directions = directions[0:3] + "1. " + directions[3:]
+                            directions = directions + "<p>" + str(recipeNumber) + '. ' + text[2:] + "</p>"
+                        else:
+                            directions = directions + "<p>" + str(recipeNumber) + '. ' + text[2:] + "</p>"
                         text = next(recipesFile).strip()
+                        recipeNumber += 1
                         while len(text) < 3:
                             text = next(recipesFile).strip()
-                        if text[0] == "=":
-                            break
                 if hasDirections:
                     while text != "==end==":
                         if re.search(r'\[\[[Cc]ategory\:[a-zA-Z]+ [Rr]ecipes\]\]', text):
