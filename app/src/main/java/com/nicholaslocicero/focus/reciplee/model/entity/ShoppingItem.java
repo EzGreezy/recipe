@@ -35,7 +35,7 @@ public class ShoppingItem {
   @ColumnInfo(name = "recipe_id", index = true)
   private Long recipe_id;
   @ColumnInfo(name = "remove_string")
-  private String remove_string;
+  private String remove_string = "";
 
   public long getId() {
     return id;

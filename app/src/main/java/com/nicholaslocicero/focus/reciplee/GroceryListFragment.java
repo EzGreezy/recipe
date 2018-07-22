@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -291,6 +292,9 @@ public class GroceryListFragment extends Fragment {
       shoppingListMap.clear();
       shoppingListIngredients.clear();
       for (ShoppingListAssembled item : shoppingItems) {
+        if (item.getRemove().contains(item.getIngredient())) {
+          continue;
+        }
         if (shoppingListMap.containsKey(item.getIngredient())) {
           if (item.getDescription() != null) {
             shoppingListMap.get(item.getIngredient()).add(item.getDescription());
@@ -459,8 +463,7 @@ public class GroceryListFragment extends Fragment {
     @Override
     protected void onPostExecute(String s) {
       if (s == null) {
-        // add to shopping list row
-        return;
+        new UpdateRemoveItem().execute(s);
       } else {
         new GetShoppingItemForDeletion().execute(s);
       }
@@ -491,6 +494,37 @@ public class GroceryListFragment extends Fragment {
     @Override
     protected void onPostExecute(Void aVoid) {
       refreshShoppingList();
+    }
+  }
+
+  private class UpdateRemoveItem extends AsyncTask<String, Void, List<ShoppingItem>> {
+
+    @Override
+    protected List<ShoppingItem> doInBackground(String... strings) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().select();
+
+    }
+
+    @Override
+    protected void onPostExecute(List<ShoppingItem> items) {
+      ShoppingItem[] arrayItems = new ShoppingItem[items.size()];
+      int count = 0;
+      for (ShoppingItem item : items) {
+        item.setRemove_string(item.getRemove_string() + deleteShoppingItemText);
+        arrayItems[count] = item;
+        count++;
+      }
+      new ShoppingItemsInsert().execute(arrayItems);
+      refreshShoppingList();
+    }
+  }
+
+  private class ShoppingItemsInsert extends AsyncTask<ShoppingItem, Void, Void> {
+
+    @Override
+    protected Void doInBackground(ShoppingItem... items) {
+      Reciplee.getInstance(getContext()).getShoppingItemDao().update(items);
+      return null;
     }
   }
 }

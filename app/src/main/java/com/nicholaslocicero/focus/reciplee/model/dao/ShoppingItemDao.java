@@ -4,7 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
+import android.arch.persistence.room.Update;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.List;
@@ -20,6 +20,9 @@ public interface ShoppingItemDao {
 
   @Insert
   List<Long> insert(List<ShoppingItem> shoppingItems);
+
+  @Update
+  void update(ShoppingItem... items);
 
 //  @Insert("INSERT INTO shopping_list (recipe_id) VALUES ((SELECT id FROM recipes WHERE recipes.title = :title))")
 //  long insert(String title);

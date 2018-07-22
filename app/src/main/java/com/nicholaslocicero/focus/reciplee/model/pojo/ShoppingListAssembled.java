@@ -10,6 +10,7 @@ public class ShoppingListAssembled {
   private String ingredient;
   private String item;
   private String description;
+  private String remove;
 
   public String getIngredient() {
     return ingredient;
@@ -41,5 +42,13 @@ public class ShoppingListAssembled {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getRemove() {
+    return remove;
+  }
+
+  public void setRemove(String remove) {
+    this.remove = remove;
   }
 }
