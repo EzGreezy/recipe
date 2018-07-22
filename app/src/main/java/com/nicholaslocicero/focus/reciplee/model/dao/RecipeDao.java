@@ -33,4 +33,7 @@ public interface RecipeDao {
 
   @Query("SELECT directions FROM recipes WHERE title = :title")
   List<String> selectDirectionsFromTitle(String title);
+
+  @Query("SELECT * FROM recipes LEFT JOIN shopping_list ON shopping_list.recipe_id = recipes.id WHERE shopping_list.recipe_id = recipes.id ORDER BY recipes.title ASC")
+  List<Recipe> selectRecipesInShoppingList();
 }

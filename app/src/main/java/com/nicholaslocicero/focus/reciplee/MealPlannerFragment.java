@@ -1,14 +1,21 @@
 package com.nicholaslocicero.focus.reciplee;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
+import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
+import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,96 +25,100 @@ import java.util.List;
  */
 public class MealPlannerFragment extends Fragment {
 
-  // TODO: Rename parameter arguments, choose names that match
-  // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String ARG_PARAM1 = "param1";
-  private static final String ARG_PARAM2 = "param2";
-
-  // TODO: Rename and change types of parameters
-  private String mParam1;
-  private String mParam2;
-
+  private ListView mealPlannerRecyclerView;
+  private MealAdapter mealAdapter;
+  private int position;
+  private List<Recipe> meals;
 
   public MealPlannerFragment() {
     // Required empty public constructor
   }
 
-  /**
-   * Use this factory method to create a new instance of this fragment using the provided
-   * parameters.
-   *
-   * @param param1 Parameter 1.
-   * @param param2 Parameter 2.
-   * @return A new instance of fragment MealPlannerFragment.
-   */
-  // TODO: Rename and change types and number of parameters
-  public static MealPlannerFragment newInstance(String param1, String param2) {
-    MealPlannerFragment fragment = new MealPlannerFragment();
-    Bundle args = new Bundle();
-    args.putString(ARG_PARAM1, param1);
-    args.putString(ARG_PARAM2, param2);
-    fragment.setArguments(args);
-    return fragment;
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_meal_planner, container, false);
+
+    meals = new ArrayList<>();
+    mealAdapter = new MealAdapter();
+    mealPlannerRecyclerView = (ListView) view.findViewById(R.id.meal_planner_list_view);
+    mealPlannerRecyclerView.setAdapter(mealAdapter);
+    updateUI();
+
+    return view;
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (getArguments() != null) {
-      mParam1 = getArguments().getString(ARG_PARAM1);
-      mParam2 = getArguments().getString(ARG_PARAM2);
-    }
+  public void onResume() {
+    super.onResume();
+    updateUI();
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_meal_planner, container, false);
+  private void updateUI() {
+    new UpdateRecipes().execute();
   }
 
 
-  private class ListHolder extends RecyclerView.ViewHolder {
-    private Ingredient mIngredient;
-    private TextView mIngredientTextView;
-    private TextView mAmountTextView;
+  private class MealHolder extends RecyclerView.ViewHolder {
+    private Recipe recipe;
+    private TextView mealTitle;
+    private TextView mealDirections;
 
-    public ListHolder(LayoutInflater inflater, ViewGroup parent) {
-      super(inflater.inflate(R.layout.list_item_ingredient, parent, false));
+    public MealHolder(LayoutInflater inflater, ViewGroup parent) {
+      super(inflater.inflate(R.layout.meal_planner_item, parent, false));
 
-      mIngredientTextView = (TextView) itemView.findViewById(R.id.name);
-      mAmountTextView = (TextView) itemView.findViewById(R.id.quantity);
+      mealTitle = (TextView) itemView.findViewById(R.id.meal_title);
+      mealDirections = (TextView) itemView.findViewById(R.id.meal_directions);
     }
 
-    public void bind(Ingredient ingredient) {
-      mIngredient = ingredient;
-      mIngredientTextView.setText(mIngredient.getName());
+    public void bind(Recipe recipe) {
+      this.recipe = recipe;
+      mealTitle.setText(this.recipe.getTitle());
+      mealDirections.setText(this.recipe.getDirections());
     }
   }
 
-  private class ListAdapter extends RecyclerView.Adapter<ListHolder> {
-    private List<Ingredient> mIngredients;
+  private class MealAdapter extends BaseAdapter {
 
-    public ListAdapter(List<Ingredient> ingredients) {
-      mIngredients = ingredients;
+    @Override
+    public int getCount() {
+      return meals.size();
     }
 
     @Override
-    public ListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-      LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-
-      return new ListHolder(layoutInflater, viewGroup);
+    public Object getItem(int position) {
+      return null;
     }
 
     @Override
-    public void onBindViewHolder(ListHolder listHolder, int i) {
-      Ingredient ingredient = mIngredients.get(i);
-      listHolder.bind(ingredient);
+    public long getItemId(int position) {
+      return 0;
     }
 
     @Override
-    public int getItemCount() {
-      return mIngredients.size();
+    public View getView(int position, View convertView, ViewGroup parent) {
+      convertView = getLayoutInflater().inflate(R.layout.meal_planner_item, null);
+      TextView title = convertView.findViewById(R.id.meal_title);
+      TextView directions = convertView.findViewById(R.id.meal_directions);
+
+      title.setText(meals.get(position).getTitle());
+      directions.setText(Html.fromHtml(meals.get(position).getDirections()));
+
+      return convertView;
+    }
+  }
+
+  private class UpdateRecipes extends AsyncTask<Void, Void, List<Recipe>> {
+
+    @Override
+    protected List<Recipe> doInBackground(Void... voids) {
+      return Reciplee.getInstance(getContext()).getRecipeDao().selectRecipesInShoppingList();
+    }
+
+    @Override
+    protected void onPostExecute(List<Recipe> recipes) {
+      meals.clear();
+      meals.addAll(recipes);
+      mealAdapter.notifyDataSetChanged();
     }
   }
 

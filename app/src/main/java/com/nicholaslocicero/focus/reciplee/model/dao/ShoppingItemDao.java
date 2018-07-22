@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.List;
