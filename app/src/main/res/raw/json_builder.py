@@ -167,6 +167,7 @@ try:
                     itemIngredientMapBuilderTemp = []
             # FIXME don't add recipes that don't have at least 1 '#' in the directions part of the parsing
             if has:
+                hasDirections = False
                 for i in recipeItemBuilderTemp:
                     recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,
                                               "description": "* " + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>')})
@@ -192,6 +193,7 @@ try:
                         while len(text) < 3:
                             text = next(recipesFile).strip()
                     else:
+                        hasDirections = True
                         directions = directions + '<li>' + text[2:] + '</li>'
                         text = next(recipesFile).strip()
                         while len(text) < 3:
@@ -206,9 +208,15 @@ try:
                             if c in categoriesIds:
                                 categoryMapBuilder.append({"recipe_id": recipeId, "category_id": categoriesIds[c]})
                     text = next(recipesFile).strip()
-                recipeBuilder.append({"id": recipeId,
-                                      "title": title,
-                                      "directions": directions.replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</ol></p>"})
+                if hasDirections:
+                    recipeBuilder.append({"id": recipeId,
+                                              "title": title,
+                                              "directions": directions.replace('[[', '<font color="#FF4081">').replace(']]', '</font>') + "</ol></p>"})
+                else:
+                    recipeBuilder.append({"id": recipeId,
+                                          "title": "",
+                                          "directions": ""})
+
                 recipeId += 1
 except(StopIteration):
     print("Dont worry")
