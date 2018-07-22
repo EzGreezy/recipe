@@ -6,8 +6,6 @@
 
   <string name="action_settings">Settings</string>
 
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="add_one_ingredient">Add one ingredient...</string>
   <string name="search_for_a_recipe">Search for a saved recipe...</string>
   <string name="add_ingredient_dialog_cancel">Cancel</string>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -12,12 +13,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener{
 
   Toolbar toolbar;
+  String[] funNavHeaderIcons = {"\uD83E\uDD57", "\uD83C\uDF71", "🍜", "🍿", "🥫", "🍚", "🍛", "🍜", "🍝",
+                                "🍠", "🍣", "🍤", "🍥", "🍦", "🥧", "☕"};
+
+  Random rng = new Random();
 
   @SuppressLint("StaticFieldLeak")
   @Override
@@ -26,10 +40,21 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+//    setNavigationViewListener();
+    final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                    R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+      @Override
+      public void onDrawerClosed(View drawerView) {
+        super.onDrawerClosed(drawerView);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.imageView);
+        navUsername.setText(funNavHeaderIcons[rng.nextInt(funNavHeaderIcons.length)]);
+      }
+    };
     drawer.addDrawerListener(toggle);
     toggle.syncState();
 
@@ -65,27 +90,6 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-//  @Override
-//  public boolean onCreateOptionsMenu(Menu menu) {
-//    // Inflate the menu; this adds items to the action bar if it is present.
-//    getMenuInflater().inflate(R.menu.main, menu);
-//    return true;
-//  }
-
-//  @Override
-//  public boolean onOptionsItemSelected(MenuItem item) {
-//    // Handle action bar item clicks here. The action bar will
-//    // automatically handle clicks on the Home/Up button, so long
-//    // as you specify a parent activity in AndroidManifest.xml.
-//    int id = item.getItemId();
-//
-//    //noinspection SimplifiableIfStatement
-//    if (id == R.id.action_settings) {
-//      return true;
-//    }
-//
-//    return super.onOptionsItemSelected(item);
-//  }
 
   @SuppressWarnings("StatementWithEmptyBody")
   @Override
@@ -124,6 +128,7 @@ public class MainActivity extends AppCompatActivity
 //    } else if (id == R.id.nav_send) {
 //
 //    }
+
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
