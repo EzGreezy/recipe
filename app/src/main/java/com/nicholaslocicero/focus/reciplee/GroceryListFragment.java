@@ -1,8 +1,12 @@
 package com.nicholaslocicero.focus.reciplee;
 
 import android.content.Context;
+import android.content.Intent;
+import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -325,8 +329,37 @@ public class GroceryListFragment extends Fragment {
       add.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-          new GetRecipe().execute(recipeTitle);
-          dialogBuilt.dismiss();
+          AlertDialog.Builder dialogCalenderBuilder = new Builder(getContext());
+          View dialogCalendarView = getLayoutInflater().inflate(R.layout.dialog_calendar_add, null);
+          TextView titleCalenderView = (TextView) dialogCalendarView.findViewById(R.id.recipe_title_to_schedule);
+          Button schedule = (Button) dialogCalendarView.findViewById(R.id.add_to_calendar);
+          Button dont_schedule = dialogCalendarView.findViewById(R.id.dont_add_to_calendar);
+          String calendarTitleText = "Would you like to schedule " + recipeTitle + " in your calendar?";
+          titleCalenderView.setText(calendarTitleText);
+          dialogCalenderBuilder.setView(dialogCalendarView);
+          final AlertDialog dialogCalendarBuilt = dialogCalenderBuilder.create();
+          dialogCalendarBuilt.show();
+          schedule.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Intent intent = new Intent(Intent.ACTION_INSERT)
+                  .setData(Events.CONTENT_URI)
+                  .putExtra(Events.TITLE, recipeTitle)
+                  .putExtra(Events.DESCRIPTION, recipeDirections);
+              startActivity(intent);
+              new GetRecipe().execute(recipeTitle);
+              dialogCalendarBuilt.dismiss();
+              dialogBuilt.dismiss();
+            }
+          });
+          dont_schedule.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              new GetRecipe().execute(recipeTitle);
+              dialogCalendarBuilt.dismiss();
+              dialogBuilt.dismiss();
+            }
+          });
         }
       });
     }
