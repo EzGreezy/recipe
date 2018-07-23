@@ -19,3 +19,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Third Party Licenses
+
+#### FANDOM CC License for Recipes
+
+[Recipes Wikia Database Dump](http://recipes.wikia.com/wiki/Special:Statistics)
+[Recipes Wikia Home Page](http://recipes.wikia.com/wiki/Recipes_Wiki)
+[Wikia CC Licensing Terms](http://www.wikia.com/Licensing)
+
+The titles, directions, ingredients, and categories of the recipes have not been altered from their original state and are clearly attributed in the XML documentation.  If reusing this app for commercial and non-personal use, please attribute the name of the username of the recipe.wikia.com user who posted the original recipe.  The original sourced dump is available in [resources/original_xml_dump](resources/original_xml_dump).
+
+[Gson Repo License](https://github.com/google/gson/blob/master/LICENSE)
+[Stetho Repo License](https://github.com/facebook/stetho/blob/master/LICENSE)

@@ -48,8 +48,10 @@ The app is written in Java, with support parsers to process the data dump writte
 
 ### Cosmetic goals, sorted by most basic
 
+- action messages could replace the need for pop ups and let users quickly undo a delete if desired or let it go, thus allowing them to only need to click once to delete something
 - updating the Expandable Shopping List to a recycler adapter that could use CardViews
 - making ingredient deletion or recipe deletion swipeable, particularly useful if the expandable list adapter had cardviews
+- make the first item in the shopping list an edit text with add button next to it, like a facebook comment edit text and how it automatically saves.  This is essentially just moving what's already there into the list view.  Testing needs to be done to see if these is worthwhile, though.
 - a clear logo (right now there is a little easter egg where the logo should be)
 
 ### Backlog stretch goals, sorted by utility/time
@@ -93,9 +95,35 @@ Track user tastes and learn to suggest better recipes for users.  See if there a
 
 ###### ERD
 
+- [first draft](docs/erd.pdf)
+
 ![white board ERD for posterity](docs/ERDonWhiteboard.jpg)
 
-- [first draft](docs/erd.pdf)
+###### DDL
+
+- [DDL link](resources/ddl.sql)
+
+###### License
+
+- [Link to the MIT License](LICENSE)
+
+###### Build Instructions
+
+1. First, make sure you have Java 7 JDK installed on your machine.  This project was written in IntelliJ, but if you have Android Studio 2.2 or higher, you should be okay.  I recommend installing the JDK just to be sure, though.
+2. Connect everything to Android Studio or IntelliJ and copy this repository.  Import into version control and build the project.  You may need to reimport the project.  Make sure to select gradle build if prompted what to build from (Maven, Gradle, etc.).
+3. Once opened, imported, and the build is successful, select an emulator or a phone to build.  The db should populate automagically and you will have all the recipes ready to go.  Have fun building on my project! :)
+
+###### Usage instructions
+
+Please note, on emulators, there seems to be two issues:
+  1. On the first build, the app opens and AutoCompleteTextView does not respond.  This is not an issue on phyiscal devices, but if you're using an emulator, please be advised to close the app and reopen it.  Then the auto text should complete successfully.
+  2. The first field ("Shopping List") cannot be clicked.  This is not an issue on the physical device the app was tested on.
+  
+One thing that may not be intuitive is that to delete a recipe or ingredient, just tap on it and you will be prompted if you'd like to delete it.  There isn't anything that will tell you that you can do this.  Just tap an ingredient in the shopping list or tap a recipe, select delete from the dialog, and it will delete.  Everything is synced together, so if you delete a recipe, all the associated ingredients will delete from the shopping list.  Deleting ingredients will not delete recipes, though.
+
+There is a little easter egg and you will notice it the more you open and close the drawer navigation view.
+
+Have fun!
 
 
 
