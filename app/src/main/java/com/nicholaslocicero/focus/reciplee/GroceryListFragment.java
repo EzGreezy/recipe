@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.w3c.dom.Text;
 
 
 /**
@@ -137,6 +138,10 @@ public class GroceryListFragment extends Fragment {
         View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
         Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
         Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+        TextView ingredientView = v.findViewById(R.id.child_txt);
+        TextView dialogTitle = dialogView.findViewById(R.id.ingredient_to_delete);
+        String ingName = ingredientView.getText().toString();
+        dialogTitle.setText(ingName);
         builder.setView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.show();

@@ -19,21 +19,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
+import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
+import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.w3c.dom.Text;
 
 
-/**
- * A simple {@link Fragment} subclass. Use the {@link MealPlannerFragment#newInstance} factory
- * method to create an instance of this fragment.
- */
 public class MealPlannerFragment extends Fragment {
 
-  private ListView mealPlannerRecyclerView;
+  private ListView mealPlannerListView;
   private MealAdapter mealAdapter;
   private int position;
-  private List<Recipe> meals;
+  private List<ShoppingListAssembled> meals;
+  private List<Recipe> mealObject;
+  private List<String> mealTitles;
 
   public MealPlannerFragment() {
     // Required empty public constructor
@@ -44,18 +48,22 @@ public class MealPlannerFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_meal_planner, container, false);
 
     meals = new ArrayList<>();
+    mealObject = new ArrayList<>();
+    mealTitles = new ArrayList<>();
     mealAdapter = new MealAdapter();
-    mealPlannerRecyclerView = (ListView) view.findViewById(R.id.meal_planner_list_view);
-    mealPlannerRecyclerView.setAdapter(mealAdapter);
+    mealPlannerListView = (ListView) view.findViewById(R.id.meal_planner_list_view);
+    mealPlannerListView.setAdapter(mealAdapter);
     updateUI();
 
-    mealPlannerRecyclerView.setOnItemClickListener(new OnItemClickListener() {
+    mealPlannerListView.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         AlertDialog.Builder builder = new Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.remove_ingredient_dialog, null);
         Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
         Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
+        TextView title = (TextView) dialogView.findViewById(R.id.ingredient_to_delete);
+        title.setText(mealTitles.get(position));
         builder.setView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.show();
@@ -68,7 +76,7 @@ public class MealPlannerFragment extends Fragment {
         delete.setOnClickListener(new OnClickListener() {
           @Override
           public void onClick(View v) {
-            new RemoveRecipeByTitle().execute(meals.get(position).getTitle());
+            new RemoveRecipeByTitle().execute(mealTitles.get(position));
             dialog.dismiss();
           }
         });
@@ -88,31 +96,11 @@ public class MealPlannerFragment extends Fragment {
     new UpdateRecipes().execute();
   }
 
-
-//  private class MealHolder extends RecyclerView.ViewHolder {
-//    private Recipe recipe;
-//    private TextView mealTitle;
-//    private TextView mealDirections;
-//
-//    public MealHolder(LayoutInflater inflater, ViewGroup parent) {
-//      super(inflater.inflate(R.layout.meal_planner_item, parent, false));
-//
-//      mealTitle = (TextView) itemView.findViewById(R.id.meal_title);
-//      mealDirections = (TextView) itemView.findViewById(R.id.meal_directions);
-//    }
-//
-//    public void bind(Recipe recipe) {
-//      this.recipe = recipe;
-//      mealTitle.setText(this.recipe.getTitle());
-//      mealDirections.setText(this.recipe.getDirections());
-//    }
-//  }
-
   private class MealAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-      return meals.size();
+      return mealTitles.size();
     }
 
     @Override
@@ -130,13 +118,28 @@ public class MealPlannerFragment extends Fragment {
       convertView = getLayoutInflater().inflate(R.layout.meal_planner_item, null);
       TextView title = convertView.findViewById(R.id.meal_title);
       TextView directions = convertView.findViewById(R.id.meal_directions);
+      TextView ingredientsTitle = convertView.findViewById(R.id.ingredients_title);
+      TextView ingredients = convertView.findViewById(R.id.meal_ingredients);
 
-      title.setText(meals.get(position).getTitle());
-      directions.setText(Html.fromHtml(meals.get(position).getDirections()));
+      title.setText(Html.fromHtml("<h2><font color = '#FF4081'>" + mealTitles.get(position) + "</font></h2>"));
+      for (Recipe recipe : mealObject) {
+        if (recipe.getTitle().equals(mealTitles.get(position))) {
+          directions.setText(Html.fromHtml(recipe.getDirections()));
+        }
+      }
+      StringBuilder ingredientsBuilder = new StringBuilder();
 
+      ingredientsTitle.setText(Html.fromHtml("<h3>Ingredients</h3>"));
+
+      for (ShoppingListAssembled shoppingItem : meals) {
+        if (shoppingItem.getTitle().equals(mealTitles.get(position))) {
+          ingredientsBuilder.append("<p>" + shoppingItem.getDescription() + "</p>");
+        }
+      }
+
+      ingredients.setText(Html.fromHtml(ingredientsBuilder.toString()));
       return convertView;
     }
-
   }
 
   private class UpdateRecipes extends AsyncTask<Void, Void, List<Recipe>> {
@@ -148,9 +151,14 @@ public class MealPlannerFragment extends Fragment {
 
     @Override
     protected void onPostExecute(List<Recipe> recipes) {
-      meals.clear();
-      meals.addAll(recipes);
-      mealAdapter.notifyDataSetChanged();
+      mealObject.clear();
+      mealObject.addAll(recipes);
+      mealTitles.clear();
+      for (Recipe recipe : mealObject) {
+        mealTitles.add(recipe.getTitle());
+      }
+      Collections.sort(mealTitles);
+      new ShoppingItemQuery().execute();
     }
   }
 
@@ -192,6 +200,24 @@ public class MealPlannerFragment extends Fragment {
     @Override
     protected void onPostExecute(Void aVoid) {
       updateUI();
+    }
+  }
+
+  private class ShoppingItemQuery extends AsyncTask<Void, Void, List<ShoppingListAssembled>> {
+
+    @Override
+    protected List<ShoppingListAssembled> doInBackground(Void... voids) {
+      return Reciplee.getInstance(getContext()).getShoppingItemDao().assembleShoppingList();
+    }
+    @Override
+    protected void onPostExecute(List<ShoppingListAssembled> shoppingItems) {
+      meals.clear();
+      for (ShoppingListAssembled item : shoppingItems) {
+        if (mealTitles.contains(item.getTitle())) {
+          meals.add(item);
+        }
+      }
+      mealAdapter.notifyDataSetChanged();
     }
   }
 
