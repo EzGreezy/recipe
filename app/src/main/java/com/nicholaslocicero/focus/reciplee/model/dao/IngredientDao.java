@@ -4,36 +4,50 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
-import com.nicholaslocicero.focus.reciplee.model.pojo.IngredientsMapRecipeItems;
 import java.util.List;
 
+/**
+ * Ingredient Dao for building and querying ingredients.
+ */
 @Dao
 public interface IngredientDao {
 
+  /**
+   * Inserts one ingredient.
+   * @param ingredient
+   * @return
+   */
   @Insert()
   long insert(Ingredient ingredient);
 
+  /**
+   * Inserts many ingredients in array form (or one).
+   * @param ingredients
+   * @return
+   */
   @Insert
   List<Long> insert(Ingredient... ingredients);
-
+  /**
+   * Inserts many ingredients in list form.
+   * @param ingredients
+   * @return
+   */
   @Insert
   List<Long> insert(List<Ingredient> ingredients);
 
-  @Query("SELECT MAX(id) FROM ingredients")
-  Long selectMax();
-
+  /**
+   * Selects all Ingredient entities in the ingredients table.
+   * @return
+   */
   @Query("SELECT * FROM ingredients")
   List<Ingredient> select();
 
+  /**
+   * Selects the id of an ingredient where a name has a substring of the input.
+   * Used for querying for out autocompeletextview when typing to find recipes.
+   * @param text the user has put in
+   * @return
+   */
   @Query("SELECT id FROM ingredients WHERE name LIKE :text")
   Long getIngredientIdByName(String text);
-
-//  @Query("SELECT CASE WHEN EXISTS (SELECT * FROM ingredients WHERE ingredients.name = :text) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END")
-//  Boolean isIngredient(String text);
-
-//  @Query(Queries.INGREDIENTS_FROM_RECIPES_LOOK_UP)
-//  List<IngredientsMapRecipeItems> selectIngredientsAndItems(String title);
-
-//  @Query(Queries.SHOPPING_LIST_ASSEMBLY)
-//  List<ShoppingListAssembled> selectIngredientsAndItems();
 }

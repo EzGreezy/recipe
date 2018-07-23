@@ -24,14 +24,23 @@ import java.util.List;
 import java.util.Random;
 import org.w3c.dom.Text;
 
+/**
+ * This is the MainActivity for Reciplee.  It hosts the NavDrawer, the fragments, and everything
+ * the user does in the app.
+ */
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener{
 
-  String[] funNavHeaderIcons = {"\uD83E\uDD57", "\uD83C\uDF71", "🍜", "🍿", "🥫", "🍚", "🍛", "🍜", "🍝",
+  private String[] funNavHeaderIcons = {"\uD83E\uDD57", "\uD83C\uDF71", "🍜", "🍿", "🥫", "🍚", "🍛", "🍜", "🍝",
                                 "🍠", "🍣", "🍤", "🍥", "🍦", "🥧", "☕", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯"};
 
-  Random rng = new Random();
+  private Random rng = new Random();
 
+
+  /**
+   * Creates the main activity view.
+   * @param savedInstanceState If the state is non-null, it holds information for us to use from a time before.
+   */
   @SuppressLint("StaticFieldLeak")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +48,6 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-//    setNavigationViewListener();
     final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -84,6 +92,10 @@ public class MainActivity extends AppCompatActivity
     toolbar.setTitle("Shopping List");
   }
 
+  /**
+   * Checks if the drawer is open, and closes it if it is.  If the drawer is not open, it calls the
+   * super class constructor to execute the callback, which is closing the app.
+   */
   @Override
   public void onBackPressed() {
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,21 +106,12 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
+  /**
+   * Listener for when an item in the nav drawer is selected.  It changes the fragment
+   * from shopping list to meal planner ui views.
+   * @param item
+   * @return
+   */
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
@@ -134,17 +137,6 @@ public class MainActivity extends AppCompatActivity
           .commit();
 
     }
-//
-//    } else if (id == R.id.nav_slideshow) {
-//
-//    } else if (id == R.id.nav_manage) {
-//
-//    } else if (id == R.id.nav_share) {
-//
-//    } else if (id == R.id.nav_send) {
-//
-//    }
-
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);

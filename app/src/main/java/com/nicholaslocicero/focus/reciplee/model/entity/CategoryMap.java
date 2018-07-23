@@ -6,6 +6,9 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+/**
+ * CategoryMap entity.
+ */
 @Entity(tableName = "categories_map",
     foreignKeys = {
     @ForeignKey(

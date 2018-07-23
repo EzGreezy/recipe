@@ -40,7 +40,11 @@ import java.util.Map;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Sets up the first view the user will see when opening the app.  It
+ * is the Fragment for the user to edit and customize his or her shopping
+ * list.  It has features such as adding ingredients, adding recipes,
+ * scheduling recipes in the device's calender app.
+ *
  */
 public class GroceryListFragment extends Fragment {
 
@@ -67,6 +71,13 @@ public class GroceryListFragment extends Fragment {
 
   }
 
+  /**
+   *
+   * @param inflater LayoutInflater The LayoutInflater object that can be used to inflate any views in the fragment,
+   * @param container ViewGroup If non-null, this is the parent view that the fragment's UI should be attached to. The fragment should not add the view itself, but this can be used to generate the LayoutParams of the view.
+   * @param savedInstanceState Bundle If non-null, this fragment is being re-constructed from a previous saved state as given here.
+   * @return returns the view for the screen
+   */
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -164,7 +175,7 @@ public class GroceryListFragment extends Fragment {
     return view;
   }
 
-  public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable{
+  private class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable{
 
     Context context;
     int resource, textViewResourceId;

@@ -5,6 +5,9 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+/**
+ * IngredientMap entity.
+ */
 @Entity(tableName = "ingredients_map",
     foreignKeys = {
         @ForeignKey(

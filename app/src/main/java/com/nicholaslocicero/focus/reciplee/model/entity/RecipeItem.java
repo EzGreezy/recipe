@@ -7,6 +7,9 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+/**
+ * RecipeItem entity
+ */
 @Entity(tableName = "recipe_item",
     foreignKeys = {
         @ForeignKey(

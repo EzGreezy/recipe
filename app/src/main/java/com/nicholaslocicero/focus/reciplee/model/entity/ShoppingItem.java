@@ -7,6 +7,9 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+/**
+ * Shopping item entity.
+ */
 @Entity(
   tableName = "shopping_list",
   foreignKeys = {

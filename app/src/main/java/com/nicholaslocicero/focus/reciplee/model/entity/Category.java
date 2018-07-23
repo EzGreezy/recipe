@@ -6,6 +6,9 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+/**
+ * Category entity.
+ */
 @Entity(tableName = "categories",
     indices = {
         @Index(value = {"id"}, unique = true)

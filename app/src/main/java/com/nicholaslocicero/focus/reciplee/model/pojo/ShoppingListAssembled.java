@@ -1,9 +1,10 @@
 package com.nicholaslocicero.focus.reciplee.model.pojo;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Relation;
-import java.util.List;
-
+/**
+ * Builds an assembled row from a complex join to get either ingredient and item (amount) to buy.
+ * Or it gets title, ingredient, description, and remove.  This tells the java code what to show
+ * for items that should or shouldn't be in the shopping list.
+ */
 public class ShoppingListAssembled {
 
   private String title;

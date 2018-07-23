@@ -31,7 +31,12 @@ import java.util.Map;
 import java.util.Set;
 import org.w3c.dom.Text;
 
-
+/**
+ * This fragment takes care of all the meal planning UI needs.  It uses CardViews from the
+ * XML to build beautiful layouts for the Recipes that are being planned and shows directions,
+ * ingredients, and the titles of the recipes.  The recipes can be deleted by being tapped and
+ * a dialog pops up to confirm deletion.
+ */
 public class MealPlannerFragment extends Fragment {
 
   private ListView mealPlannerListView;
@@ -41,10 +46,21 @@ public class MealPlannerFragment extends Fragment {
   private List<Recipe> mealObject;
   private List<String> mealTitles;
 
+  /**
+   * Default public constructor, required.
+   */
   public MealPlannerFragment() {
-    // Required empty public constructor
+
   }
 
+  /**
+   * Builds the view for the fragment.  Gets refreshed several times as queries are made to the
+   * shopping list table.
+   * @param inflater LayoutInflater The LayoutInflater object that can be used to inflate any views in the fragment,
+   * @param container ViewGroup If non-null, this is the parent view that the fragment's UI should be attached to. The fragment should not add the view itself, but this can be used to generate the LayoutParams of the view.
+   * @param savedInstanceState Bundle If non-null, this fragment is being re-constructed from a previous saved state as given here.
+   * @return returns the view for the screen
+   */
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_meal_planner, container, false);
@@ -89,6 +105,9 @@ public class MealPlannerFragment extends Fragment {
     return view;
   }
 
+  /**
+   * Updates the user interface with query to db from private method.
+   */
   @Override
   public void onResume() {
     super.onResume();

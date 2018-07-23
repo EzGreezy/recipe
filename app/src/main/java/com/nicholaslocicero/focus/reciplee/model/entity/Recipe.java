@@ -4,6 +4,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import java.util.Comparator;
 
+/**
+ * Recipe entity
+ */
 @Entity(tableName = "recipes")
 public class Recipe implements Comparator<Recipe> {
 

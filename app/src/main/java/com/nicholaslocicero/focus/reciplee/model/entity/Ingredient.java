@@ -3,7 +3,9 @@ package com.nicholaslocicero.focus.reciplee.model.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-
+/**
+ * Ingredient entity.
+ */
 @Entity(tableName = "ingredients")
 public class Ingredient {
 
