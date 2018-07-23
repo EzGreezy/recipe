@@ -65,7 +65,8 @@ public class MealPlannerFragment extends Fragment {
         Button delete = (Button) dialogView.findViewById(R.id.delete_ingredient);
         Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
         TextView title = (TextView) dialogView.findViewById(R.id.ingredient_to_delete);
-        title.setText(mealTitles.get(position));
+        String deleteMessage = "Delete " + mealTitles.get(position) + "?";
+        title.setText(deleteMessage);
         builder.setView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.show();

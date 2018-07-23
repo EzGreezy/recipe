@@ -36,7 +36,8 @@
 
     <Button
       android:id="@+id/back"
-      android:layout_marginHorizontal="24dp"
+      android:layout_marginLeft="24dp"
+      android:layout_marginRight="24dp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="@drawable/back_button_bg"
@@ -45,7 +46,8 @@
 
     <Button
       android:id="@+id/add"
-      android:layout_marginHorizontal="24dp"
+      android:layout_marginLeft="24dp"
+      android:layout_marginRight="24dp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="@color/colorAccent"

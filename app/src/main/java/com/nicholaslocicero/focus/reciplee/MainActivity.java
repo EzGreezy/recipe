@@ -27,7 +27,6 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener{
 
-  Toolbar toolbar;
   String[] funNavHeaderIcons = {"\uD83E\uDD57", "\uD83C\uDF71", "🍜", "🍿", "🥫", "🍚", "🍛", "🍜", "🍝",
                                 "🍠", "🍣", "🍤", "🍥", "🍦", "🥧", "☕", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯"};
 
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity
 //    setNavigationViewListener();
     final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
       @Override
@@ -53,6 +51,12 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.imageView);
         navUsername.setText(funNavHeaderIcons[rng.nextInt(funNavHeaderIcons.length)]);
+      }
+
+      @Override
+      public void onDrawerOpened(View drawerView) {
+        super.onDrawerOpened(drawerView);
+        drawer.requestLayout();
       }
     };
     drawer.addDrawerListener(toggle);
@@ -90,15 +94,28 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
 
-  @SuppressWarnings("StatementWithEmptyBody")
+    //noinspection SimplifiableIfStatement
+    if (id == R.id.action_settings) {
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
     int id = item.getItemId();
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
     if (id == R.id.nav_shopping_list) {
-      toolbar = (Toolbar) findViewById(R.id.toolbar);
       toolbar.setTitle("Shopping List");
 
       GroceryListFragment shoppingList = new GroceryListFragment();
@@ -108,7 +125,6 @@ public class MainActivity extends AppCompatActivity
           .commit();
 
     } else if (id == R.id.nav_meal_planner) {
-      toolbar = (Toolbar) findViewById(R.id.toolbar);
       toolbar.setTitle("Meal Planner");
 
       MealPlannerFragment mealPlannerFragment = new MealPlannerFragment();
@@ -134,4 +150,6 @@ public class MainActivity extends AppCompatActivity
     drawer.closeDrawer(GravityCompat.START);
     return true;
   }
+
+
 }

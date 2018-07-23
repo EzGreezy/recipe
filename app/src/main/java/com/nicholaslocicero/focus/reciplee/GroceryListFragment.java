@@ -2,17 +2,13 @@ package com.nicholaslocicero.focus.reciplee;
 
 import android.content.Context;
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.widget.ListPopupWindow;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +29,6 @@ import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
-import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
@@ -42,7 +37,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.w3c.dom.Text;
 
 
 /**
@@ -322,7 +316,7 @@ public class GroceryListFragment extends Fragment {
       recipeDirections = strings.get(0);
       recipeDirections = "<h4>Directions</h4>" + recipeDirections.replace("& ", "\n- ");
       AlertDialog.Builder dialog = new Builder(getContext());
-      View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
+      View dialogView = getLayoutInflater().inflate(R.layout.add_recipe_dialog, null);
       TextView title = (TextView) dialogView.findViewById(R.id.recipe_title);
       TextView directions = (TextView) dialogView.findViewById(R.id.recipe_directions);
       Button add = (Button) dialogView.findViewById(R.id.add);
