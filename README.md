@@ -90,8 +90,14 @@ Track user tastes and learn to suggest better recipes for users.  See if there a
 
 ###### Wireframes
 
-- [first draft](docs/wireframe.pdf)
-- [second draft](docs/wireframeDraft2.pdf)
+- [first draft wireframe and user-story](docs/wireframe.pdf)
+- [second draft wireframe and user-story](docs/wireframeDraft2.pdf)
+
+Since a lot of repos are using gifs to show the user story for their projects (especially UI third party open source toolsets), I'm adding the final wireframe/user-story as a gif movie of my app's features.
+
+Final wireframe and user-story as gif:
+
+![final user story as a gif](docs/final_user_story.gif)
 
 ###### ERD
 
