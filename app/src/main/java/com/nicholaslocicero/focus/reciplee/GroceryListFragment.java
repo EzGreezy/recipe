@@ -33,6 +33,7 @@ import android.widget.TextView.BufferType;
 import com.nicholaslocicero.focus.reciplee.model.db.Reciplee;
 import com.nicholaslocicero.focus.reciplee.model.entity.Ingredient;
 import com.nicholaslocicero.focus.reciplee.model.entity.Recipe;
+import com.nicholaslocicero.focus.reciplee.model.entity.RecipeItem;
 import com.nicholaslocicero.focus.reciplee.model.entity.ShoppingItem;
 import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class GroceryListFragment extends Fragment {
   private String addIngredientDirectText = "";
   private String addIngredientDirectAmount = "";
   private String deleteShoppingItemText = "";
+  private List<String> recipeItems;
 
   public GroceryListFragment() {
 
@@ -77,6 +79,7 @@ public class GroceryListFragment extends Fragment {
     // FIXME On the first installation, when it starts up on emulator, the autocomplete text doesn't work. You have to completely close the app and restart it.
     View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
     getActivity().setTitle("Shopping List");
+    recipeItems = new ArrayList<>();
     new RecipesQuery().execute();
     shoppingListExpandable = (ExpandableListView) view.findViewById(R.id.shopping_expandable_list_view);
     adapter = new ShoppingListAdapter(getContext(), shoppingListMap, shoppingListIngredients);
@@ -140,17 +143,19 @@ public class GroceryListFragment extends Fragment {
         Button back = (Button) dialogView.findViewById(R.id.dont_delete_ingredient);
         TextView ingredientView = v.findViewById(R.id.child_txt);
         TextView dialogTitle = dialogView.findViewById(R.id.ingredient_to_delete);
-        String ingName = ingredientView.getText().toString();
-        dialogTitle.setText(ingName);
+        String ingName = "<h4>Delete <font color='#FF4081'>" + parent.getExpandableListAdapter().getGroup(groupPosition) + "</font>:</h4><li>" +
+            ingredientView.getText().toString().substring(1) + "</li>";
+        // parent to getText()
+        dialogTitle.setText(Html.fromHtml(ingName));
         builder.setView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.show();
         back.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        dialog.dismiss();
-      }
-    });
+          @Override
+          public void onClick(View v) {
+            dialog.dismiss();
+          }
+        });
         deleteShoppingItemText = ((TextView) v.findViewById(R.id.child_txt)).getText().toString();
         delete.setOnClickListener(new OnClickListener() {
           @Override
@@ -259,8 +264,10 @@ public class GroceryListFragment extends Fragment {
       shoppingListMap.clear();
       shoppingListIngredients.clear();
       for (ShoppingListAssembled item : shoppingItems) {
-        if (item.getRemove().contains(item.getIngredient())) {
-          continue;
+        if (item.getDescription() != null) {
+          if (item.getRemove().contains(item.getDescription())) {
+            continue;
+          }
         }
         if (shoppingListMap.containsKey(item.getIngredient())) {
           if (item.getDescription() != null) {
@@ -511,7 +518,6 @@ public class GroceryListFragment extends Fragment {
         count++;
       }
       new ShoppingItemsInsert().execute(arrayItems);
-      refreshShoppingList();
     }
   }
 
@@ -521,6 +527,11 @@ public class GroceryListFragment extends Fragment {
     protected Void doInBackground(ShoppingItem... items) {
       Reciplee.getInstance(getContext()).getShoppingItemDao().update(items);
       return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+      refreshShoppingList();
     }
   }
 }

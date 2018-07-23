@@ -25,8 +25,10 @@ import com.nicholaslocicero.focus.reciplee.model.pojo.ShoppingListAssembled;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.w3c.dom.Text;
 
 
@@ -35,7 +37,7 @@ public class MealPlannerFragment extends Fragment {
   private ListView mealPlannerListView;
   private MealAdapter mealAdapter;
   private int position;
-  private List<ShoppingListAssembled> meals;
+  private Set<ShoppingListAssembled> meals;
   private List<Recipe> mealObject;
   private List<String> mealTitles;
 
@@ -47,7 +49,7 @@ public class MealPlannerFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_meal_planner, container, false);
 
-    meals = new ArrayList<>();
+    meals = new HashSet<>();
     mealObject = new ArrayList<>();
     mealTitles = new ArrayList<>();
     mealAdapter = new MealAdapter();
@@ -127,17 +129,19 @@ public class MealPlannerFragment extends Fragment {
           directions.setText(Html.fromHtml(recipe.getDirections()));
         }
       }
-      StringBuilder ingredientsBuilder = new StringBuilder();
+      String ingredientsString = "";
 
       ingredientsTitle.setText(Html.fromHtml("<h3>Ingredients</h3>"));
 
       for (ShoppingListAssembled shoppingItem : meals) {
-        if (shoppingItem.getTitle().equals(mealTitles.get(position))) {
-          ingredientsBuilder.append("<p>" + shoppingItem.getDescription() + "</p>");
+        if (shoppingItem.getTitle().equals(mealTitles.get(position)) &&
+            // make sure we aren't adding ingredients from a duplicate recipe
+            !ingredientsString.contains(shoppingItem.getDescription())) {
+          ingredientsString += "<p>" + shoppingItem.getDescription() + "</p>";
         }
       }
 
-      ingredients.setText(Html.fromHtml(ingredientsBuilder.toString()));
+      ingredients.setText(Html.fromHtml(ingredientsString.toString()));
       return convertView;
     }
   }

@@ -18,26 +18,32 @@
     android:layout_marginTop="16dp"
     android:layout_marginBottom="8dp"
     android:orientation="horizontal">
-     <!--TODO fix the spacing here-->
-    <Button
-      android:id="@+id/dialog_add_ingredient_cancel_button"
-      android:layout_marginLeft="24dp"
-      android:layout_marginRight="24dp"
-      android:layout_width="wrap_content"
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_weight="1"
       android:layout_height="wrap_content"
-      android:background="@drawable/back_button_bg"
-      android:textColor="@color/colorAccent"
-      android:text="@string/add_ingredient_dialog_cancel"/>
-
-    <Button
-      android:id="@+id/dialog_add_ingredient_add_button"
-      android:layout_marginLeft="24dp"
-      android:layout_marginRight="24dp"
-      android:layout_width="wrap_content"
+      android:gravity="center">
+      <Button
+        android:id="@+id/dialog_add_ingredient_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_button_bg"
+        android:textColor="@color/colorAccent"
+        android:text="@string/add_ingredient_dialog_cancel"/>
+    </LinearLayout>
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_weight="1"
       android:layout_height="wrap_content"
-      android:background="@color/colorAccent"
-      android:textColor="@android:color/white"
-      android:text="@string/add_ingredient_dialog_add" />
+      android:gravity="center">
+      <Button
+        android:id="@+id/dialog_add_ingredient_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:text="@string/add_ingredient_dialog_add" />
+    </LinearLayout>
   </LinearLayout>
 
 </LinearLayout>

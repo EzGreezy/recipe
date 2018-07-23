@@ -169,8 +169,10 @@ try:
             if has:
                 hasDirections = False
                 for i in recipeItemBuilderTemp:
+                    # recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,
+                    #                                               "description": "* " + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>')})
                     recipeItemBuilder.append({"id": recipeItemId, "recipe_id": recipeId,
-                                              "description": "* " + i[0]["description"].replace('[[', '<font color="#FF4081">').replace(']]', '</font>')})
+                                              "description": "* " + i[0]["description"].replace('[[', '').replace(']]', '')})
                     for j in i[1]:
                         itemIngredientMapBuilder.append({"recipe_item_id": recipeItemId, "ingredient_id": j["ingredient_id"]})
                     recipeItemId += 1
