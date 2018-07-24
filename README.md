@@ -88,6 +88,10 @@ Track user tastes and learn to suggest better recipes for users.  See if there a
 
 ## Links
 
+###### Javadoc
+
+- [Link to the Javadocs](docs/api/index.html)
+
 ###### Wireframes
 
 - [first draft wireframe and user-story](docs/wireframe.pdf)
